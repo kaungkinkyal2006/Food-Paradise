@@ -1,0 +1,156 @@
+/* assets/dashboard.css */
+
+/* Basic reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-sky: #87CEEB;
+    --primary-sky-dark: #4A90E2;
+    --primary-sky-light: #B8E6FF;
+    --grey-dark: #333333;
+    --grey-medium: #666666;
+    --grey-light: #F5F5F5;
+    --grey-border: #E0E0E0;
+    --white: #FFFFFF;
+    --shadow: 0 8px 20px rgba(0,0,0,0.12);
+    --shadow-hover: 0 12px 30px rgba(0,0,0,0.2);
+    --border-radius: 12px;
+    --transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* Body */
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--grey-light);
+    color: var(--grey-dark);
+    min-height: 100vh;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--white);
+    padding: 1rem 2rem;
+    box-shadow: var(--shadow);
+}
+
+.navbar .logo {
+    font-size: 1.8rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary-sky-dark), var(--primary-sky));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.navbar .nav-links {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+}
+
+.navbar .nav-links li a {
+    text-decoration: none;
+    font-weight: 500;
+    color: var(--grey-dark);
+    transition: var(--transition);
+}
+
+.navbar .nav-links li a:hover {
+    color: var(--primary-sky-dark);
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+/* Section Title */
+h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2rem;
+    background: linear-gradient(135deg, var(--primary-sky-dark), var(--primary-sky));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+    box-shadow: var(--shadow);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+thead {
+    background: var(--primary-sky);
+    color: var(--white);
+}
+
+thead th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+}
+
+tbody tr {
+    border-bottom: 1px solid var(--grey-border);
+    transition: background 0.3s ease;
+}
+
+tbody tr:hover {
+    background: var(--grey-light);
+}
+
+tbody td {
+    padding: 0.8rem 1rem;
+}
+
+/* Empty orders message */
+p {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--grey-medium);
+    margin-top: 2rem;
+}
+
+/* Responsive */
+@media(max-width:1024px){
+    table thead {
+        display: none;
+    }
+    table, tbody, tr, td {
+        display: block;
+        width: 100%;
+    }
+    tr {
+        margin-bottom: 1.5rem;
+        box-shadow: var(--shadow);
+        border-radius: var(--border-radius);
+        padding: 1rem;
+    }
+    td {
+        padding: 0.5rem;
+        text-align: right;
+        position: relative;
+    }
+    td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 1rem;
+        font-weight: 600;
+        color: var(--grey-dark);
+        text-align: left;
+    }
+}
