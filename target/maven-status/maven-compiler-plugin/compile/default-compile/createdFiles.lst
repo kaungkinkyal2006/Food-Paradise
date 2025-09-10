@@ -17,5 +17,4 @@ com/foodparadise/model/User.class
 com/foodparadise/web/MyOrdersServlet.class
 com/foodparadise/web/CartServlet.class
 com/foodparadise/model/OrderItem.class
-com/foodparadise/web/UpdateOrderStatusServlet.class
 com/foodparadise/dao/AuthDAO.class

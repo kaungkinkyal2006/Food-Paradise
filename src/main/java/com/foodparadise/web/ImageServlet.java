@@ -11,7 +11,7 @@ import java.nio.file.Files;
 
 @WebServlet("/uploads/*")
 public class ImageServlet extends HttpServlet {
-    private static final String UPLOAD_DIR = "/Users/7c/WorkSpace/food_paradise_uploads";
+    private static final String UPLOAD_DIR = "/Users/7c/WorkSpace/food-paradise/food_paradise_uploads";
     //private static final String UPLOAD_DIR = "C:/Users/7c/WorkSpace/food_paradise_uploads";
 
 

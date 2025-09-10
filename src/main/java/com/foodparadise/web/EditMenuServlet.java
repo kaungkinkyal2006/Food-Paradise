@@ -26,6 +26,13 @@ public class EditMenuServlet extends HttpServlet {
         String categoryName = request.getParameter("category");
         String priceStr = request.getParameter("price");
         String description = request.getParameter("description");
+        String stockStr = request.getParameter("stock"); // get stock from form
+        int stock = 0;
+        try {
+            stock = Integer.parseInt(stockStr);
+        } catch (NumberFormatException e) {
+            stock = 0; // fallback
+        }
 
         double price = Double.parseDouble(priceStr);
 
@@ -39,6 +46,17 @@ public class EditMenuServlet extends HttpServlet {
         // handle image
         Part filePart = request.getPart("image");
         String imgUrl = null;
+
+        MenuDAO dao = new MenuDAO();
+        MenuItem existingItem = dao.getMenuItemById(id); // fetch existing item from DB
+        if (existingItem == null) {
+            response.getWriter().println("Item not found.");
+            return;
+        }
+
+        // use old image if no new image uploaded
+        imgUrl = existingItem.getImgUrl();
+
         if(filePart != null && filePart.getSize() > 0){
             String fileName = Path.of(filePart.getSubmittedFileName()).getFileName().toString();
             String uploadPath = getServletContext().getRealPath("/uploads/");
@@ -48,8 +66,8 @@ public class EditMenuServlet extends HttpServlet {
             imgUrl = "uploads/" + fileName;
         }
 
-        MenuDAO dao = new MenuDAO();
-        MenuItem item = new MenuItem(id, categoryId, name, price, imgUrl, description);
+        // create updated MenuItem including stock
+        MenuItem item = new MenuItem(id, categoryId, name, price, imgUrl, description, stock);
         boolean success = dao.updateMenuItem(item);
 
         if(success){

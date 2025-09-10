@@ -7,7 +7,7 @@ public class Order {
     private int id;
     private int userId;
     private double total;
-    private String status;
+
     private Timestamp createdAt;
     private double originalTotal; // Store original total before discount
     private double discountAmount; // Store discount amount
@@ -15,11 +15,10 @@ public class Order {
 
     public Order() {}
 
-    public Order(int id, int userId, double total, String status, Timestamp createdAt) {
+    public Order(int id, int userId, double total, Timestamp createdAt) {
         this.id = id;
         this.userId = userId;
         this.total = total;
-        this.status = status;
         this.createdAt = createdAt;
         this.originalTotal = total;
         this.discountAmount = 0.0;
@@ -66,9 +65,6 @@ public class Order {
 
     public double getTotal() { return total; }
     public void setTotal(double total) { this.total = total; }
-
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
 
     public Timestamp getCreatedAt() { return createdAt; }
     public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }

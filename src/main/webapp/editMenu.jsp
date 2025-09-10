@@ -17,7 +17,7 @@
 
     int id = Integer.parseInt(idStr);
     MenuDAO dao = new MenuDAO();
-    MenuItem item = dao.getMenuItemById(id); // we’ll add this method in DAO
+    MenuItem item = dao.getMenuItemById(id); // Ensure DAO method exists
     if(item == null){
         response.sendRedirect("admin.jsp");
         return;
@@ -64,6 +64,9 @@
             <label for="price">Price (MMK):</label>
             <input type="number" id="price" name="price" value="<%= item.getPrice() %>" step="0.01" required>
 
+            <label for="stock">Stock:</label>
+            <input type="number" id="stock" name="stock" value="<%= item.getStock() %>" min="0" required>
+
             <label for="image">Change Image (optional):</label>
             <input type="file" id="image" name="image" accept="image/*">
 
@@ -78,7 +81,6 @@
                 🗑️ Delete Item
             </button>
         </form>
-
     </div>
 </section>
 </body>

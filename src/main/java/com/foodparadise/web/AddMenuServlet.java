@@ -41,6 +41,7 @@ public class AddMenuServlet extends HttpServlet {
         String categoryName = request.getParameter("category");
         String priceStr = request.getParameter("price");
         String description = request.getParameter("description");
+        int stockStr = Integer.parseInt(request.getParameter("stock"));
 
         if (name == null || categoryName == null || priceStr == null || name.trim().isEmpty()) {
             response.getWriter().println("Missing required fields.");
@@ -68,7 +69,7 @@ public class AddMenuServlet extends HttpServlet {
             String originalFileName = Path.of(filePart.getSubmittedFileName()).getFileName().toString();
             String uniqueFileName = System.currentTimeMillis() + "_" + originalFileName;
 
-            String uploadPath = "/Users/7c/WorkSpace/food_paradise_uploads";
+            String uploadPath = "/Users/7c/WorkSpace/food-paradise/food_paradise_uploads";
 
             // These are for windows try one if one does not work and there is one more to fix in imageServlet
             //String uploadPath = "C:\\Users\\YourUsername\\WorkSpace\\food_paradise_uploads";
@@ -85,7 +86,7 @@ public class AddMenuServlet extends HttpServlet {
         }
 
         // Create MenuItem and save
-        MenuItem item = new MenuItem(0, categoryId, name, price, imgUrl, description);
+        MenuItem item = new MenuItem(0, categoryId, name, price, imgUrl, description, stockStr);
         MenuDAO dao = new MenuDAO();
         boolean success = dao.addMenuItem(item);
 

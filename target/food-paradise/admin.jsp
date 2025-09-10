@@ -43,19 +43,21 @@
 
 
     <div id="admin-content" class="content-grid">
-        <% if(menuItems != null && menuItems.size() > 0) { %>
-        <% for(MenuItem item : menuItems) { %>
-        <div class="card">
-            <h3><%= item.getName() %></h3>
-            <p>Category: <%= item.getCategoryId() %></p>
-            <p>Price: MMK<%= item.getPrice() %></p>
-            <button class="btn" onclick="location.href='editMenu.jsp?id=<%= item.getId() %>'">Edit</button>
-        </div>
-        <% } %>
-        <% } else { %>
-        <p>No menu items found. Add some!</p>
-        <% } %>
+    <% if(menuItems != null && menuItems.size() > 0) { %>
+    <% for(MenuItem item : menuItems) { %>
+    <div class="card">
+        <h3><%= item.getName() %></h3>
+        <p>Category: <%= item.getCategoryId() %></p>
+        <p>Price: MMK<%= item.getPrice() %></p>
+        <p>Stock: <%= item.getStock() %></p> <!-- added stock display -->
+        <button class="btn" onclick="location.href='editMenu.jsp?id=<%= item.getId() %>'">Edit</button>
     </div>
+    <% } %>
+    <% } else { %>
+    <p>No menu items found. Add some!</p>
+    <% } %>
+</div>
+
 
 </section>
 

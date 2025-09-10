@@ -6,7 +6,6 @@
 /Users/7c/WorkSpace/food-paradise/src/main/java/com/foodparadise/model/User.java
 /Users/7c/WorkSpace/food-paradise/src/main/java/com/foodparadise/dao/OrderDAO.java
 /Users/7c/WorkSpace/food-paradise/src/main/java/com/foodparadise/model/MenuItem.java
-/Users/7c/WorkSpace/food-paradise/src/main/java/com/foodparadise/web/UpdateOrderStatusServlet.java
 /Users/7c/WorkSpace/food-paradise/src/main/java/com/foodparadise/web/EditMenuServlet.java
 /Users/7c/WorkSpace/food-paradise/src/main/java/com/foodparadise/web/AddMenuServlet.java
 /Users/7c/WorkSpace/food-paradise/src/main/java/com/foodparadise/web/RemoveCartItemServlet.java

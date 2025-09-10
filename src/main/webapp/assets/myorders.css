@@ -1,170 +1,261 @@
-/* assets/index.css */
+/* myorders.css - Food Paradise My Orders Page */
 
-/* Basic reset */
+/* RESET / BASE */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-:root {
-    --primary-sky: #87CEEB;
-    --primary-sky-dark: #4A90E2;
-    --primary-sky-light: #B8E6FF;
-    --grey-dark: #333333;
-    --grey-medium: #666666;
-    --grey-light: #F5F5F5;
-    --grey-border: #E0E0E0;
-    --white: #FFFFFF;
-    --shadow: 0 8px 20px rgba(0,0,0,0.12);
-    --shadow-hover: 0 12px 30px rgba(0,0,0,0.2);
-    --border-radius: 16px;
-    --transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
-}
-
-/* Body */
 body {
-    font-family: 'Inter', sans-serif;
-    background: linear-gradient(135deg, var(--grey-light) 0%, var(--white) 100%);
-    color: var(--grey-dark);
+    font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     min-height: 100vh;
-    line-height: 1.6;
+    overflow-x: hidden;
+    color: #fff;
+    background: url('assets/background.webp') no-repeat center center fixed;
+    background-size: cover;
+    position: relative;
 }
 
-/* Container */
+/* LEAF ANIMATIONS */
+.leaf {
+    position: fixed;
+    width: 40px;
+    height: 40px;
+    background: url('assets/leaf.png') no-repeat center center;
+    background-size: contain;
+    z-index: 0;
+    pointer-events: none;
+    animation: floatLeaf linear infinite;
+}
+
+@keyframes floatLeaf {
+    0% { transform: translateY(-100px) rotate(0deg); opacity: 0; }
+    10% { opacity: 1; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+}
+
+/* OVERLAY */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.15);
+    z-index: 0;
+}
+
+/* CONTAINER */
 .container {
+    background: rgba(0, 0, 0, 0.7);
     max-width: 1200px;
     margin: 2rem auto;
-    padding: 0 1rem;
+    padding: 2rem;
+    border-radius: 12px;
+    position: relative;
+    z-index: 10;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
 }
 
-/* Header */
-header.topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: var(--white);
+/* HEADER / NAVBAR */
+.header {
+    background: rgba(255,255,255,0.2);
+    border-bottom: 1px solid rgba(255,255,255,0.3);
     padding: 1rem 2rem;
-    box-shadow: var(--shadow);
-    margin-bottom: 2rem;
-    border-radius: var(--border-radius);
+    position: sticky;
+    top: 0;
+    z-index: 200;
 }
 
-header.topbar h1 {
-    font-size: 2rem;
-    background: linear-gradient(135deg, var(--primary-sky-dark), var(--primary-sky));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-header.topbar nav a {
-    margin-left: 1rem;
+.logo {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #ff6b35;
+}
+.logo p {
+    display:inline-block;
+    margin:0;
+    font-size: 0.95rem;
+    font-weight:700;
+    color: #fff;
+}
+
+.nav-links {
+    display: flex;
+    gap: 1.6rem;
+    list-style: none;
+}
+.nav-links a {
+    color: rgba(255,255,255,0.95);
     text-decoration: none;
-    font-weight: 500;
-    color: var(--grey-dark);
-    transition: var(--transition);
+    font-weight: 600;
+    transition: color .2s, transform .15s;
+}
+.nav-links a:hover {
+    color: #8bc34a;
+    transform: translateY(-2px);
 }
 
-header.topbar nav a:hover {
-    color: var(--primary-sky-dark);
+.search-cart {
+    display:flex;
+    align-items:center;
+    gap: 0.8rem;
 }
+.search-box {
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 999px;
+    padding: 0.45rem 0.9rem;
+    color: #fff;
+    outline: none;
+    min-width: 180px;
+}
+.search-box::placeholder { color: rgba(255,255,255,0.7); }
 
-/* Section Title */
-h2 {
-    font-size: 2.5rem;
-    font-weight: 700;
+.cart-icon, .login-btn {
+    cursor: pointer;
+    border: none;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s;
+}
+.cart-icon {
+    background: linear-gradient(180deg, #ff6b35, #e85a2a);
+    color: #fff;
+}
+.cart-icon:hover { transform: translateY(-2px); }
+.login-btn {
+    background: #ff9800;
+    color: #fff;
+}
+.login-btn:hover { background: #e68900; }
+
+/* PAGE TITLE */
+main h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    font-weight: 800;
+    color: #c8ff98;
     text-align: center;
-    margin-bottom: 2rem;
-    background: linear-gradient(135deg, var(--primary-sky-dark), var(--primary-sky));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
 }
 
-/* Table Styling */
+/* ORDERS TABLE */
 table {
     width: 100%;
     border-collapse: collapse;
-    background: var(--white);
-    box-shadow: var(--shadow);
-    border-radius: var(--border-radius);
+    background: rgba(255,255,255,0.25);
+    border-radius: 12px;
     overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
 }
 
 thead {
-    background: var(--primary-sky);
-    color: var(--white);
+    background: rgba(139,195,74,0.25);
 }
 
-thead th {
-    padding: 1rem;
-    text-align: left;
+th, td {
+    padding: 12px 18px;
+    text-align: center;
     font-weight: 600;
 }
 
-tbody tr {
-    border-bottom: 1px solid var(--grey-border);
-    transition: background 0.3s ease;
+th {
+    color: #fff;
+    font-size: 1rem;
 }
 
-tbody tr:hover {
-    background: var(--grey-light);
+td {
+    color: rgba(255,255,255,0.95);
+    font-size: 0.95rem;
+    border-top: 1px solid rgba(255,255,255,0.2);
 }
 
-tbody td {
-    padding: 0.8rem 1rem;
+tr:hover {
+    background: rgba(255,255,255,0.12);
 }
 
-/* Buttons */
+/* ACTION BUTTON */
 .btn {
-    background: linear-gradient(135deg, var(--primary-sky-dark), var(--primary-sky));
-    color: var(--white);
+    padding: 6px 12px;
+    background: #8bc34a;
+    color: #0c1f05;
+    font-weight: 700;
     border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 12px;
+    border-radius: 8px;
     cursor: pointer;
-    font-weight: 600;
-    transition: var(--transition);
+    transition: all 0.25s ease;
 }
-
 .btn:hover {
+    background: #7ab239;
     transform: translateY(-2px);
-    box-shadow: var(--shadow-hover);
 }
 
-/* Empty orders message */
+/* EMPTY ORDERS MESSAGE */
 p {
     text-align: center;
-    font-size: 1.2rem;
-    color: var(--grey-medium);
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.9);
     margin-top: 2rem;
 }
 
-/* Responsive */
-@media(max-width:1024px){
-    table thead {
-        display: none;
-    }
-    table, tbody, tr, td {
-        display: block;
-        width: 100%;
-    }
-    tr {
-        margin-bottom: 1.5rem;
-        box-shadow: var(--shadow);
-        border-radius: var(--border-radius);
-        padding: 1rem;
-    }
-    td {
-        padding: 0.5rem;
-        text-align: right;
-        position: relative;
-    }
-    td::before {
-        content: attr(data-label);
-        position: absolute;
-        left: 1rem;
-        font-weight: 600;
-        color: var(--grey-dark);
-        text-align: left;
-    }
+/* FOOTER */
+.footer {
+    background: rgba(15, 31, 5, 0.95);
+    color: #fff;
+    padding: 50px 20px;
+    text-align: center;
+    border-top: 2px solid #8bc34a;
+}
+.footer-logo {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+    color: #ff6b35;
+}
+.footer-logo span {
+    color: #fff;
+}
+.footer-links {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+.footer-links li a {
+    color: #c8ff98;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: color 0.3s;
+}
+.footer-links li a:hover {
+    color: #8bc34a;
+    text-decoration: underline;
+}
+.footer-copy {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    th, td { font-size: 0.9rem; padding: 10px 12px; }
+    main h2 { font-size: 1.7rem; }
+}
+
+@media (max-width: 520px) {
+    .navbar { flex-direction: column; gap: 0.6rem; }
+    .nav-links { display: none; }
+    .search-box { min-width: 140px; }
+    table { font-size: 0.85rem; }
 }

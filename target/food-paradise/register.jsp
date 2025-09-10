@@ -4,9 +4,19 @@
 <head>
   <meta charset="UTF-8">
   <title>Register — Food Paradise</title>
-  <link rel="stylesheet" href="assets/register.css">
+  <link rel="stylesheet" href="assets/register.css?v=1.0">
 </head>
 <body>
+  <!-- Veggies floating around -->
+<div class="veggie carrot" style="left:10%; top:-50px;"></div>
+<div class="veggie tomato" style="left:40%; top:-50px;"></div>
+<div class="veggie chili" style="left:70%; top:-50px;"></div>
+<div class="floating-leaf" style="left:20%; top:-50px;"></div>
+<div class="floating-leaf" style="left:50%; top:-50px;"></div>
+<div class="floating-leaf" style="left:80%; top:-50px;"></div>
+<div class="floating-sparkle" style="left:10%; top:30%;"></div>
+<div class="floating-sparkle" style="left:70%; top:50%;"></div>
+
   <div class="card">
     <h2>Create Account</h2>
     <form method="post" action="register">

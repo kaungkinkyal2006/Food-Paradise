@@ -48,6 +48,9 @@
                 <label for="price">Price (MMK):</label>
                 <input type="number" id="price" name="price" step="0.01" required placeholder="E.g., 3500">
 
+                <label for="stock">Stock:</label>
+                <input type="number" id="stock" name="stock" min="0" required placeholder="E.g., 50">
+
                 <label for="image">Choose Image (optional):</label>
                 <input type="file" id="image" name="image" accept="image/*">
 
@@ -57,7 +60,6 @@
                 <button type="submit" class="btn">➕ Add Item</button>
             </div>
         </form>
-
     </div>
 </section>
 

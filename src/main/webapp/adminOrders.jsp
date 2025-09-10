@@ -42,7 +42,6 @@
             <th>Order ID</th>
             <th>User ID</th>
             <th>Total</th>
-            <th>Status</th>
             <th>Created At</th>
         </tr>
         </thead>
@@ -52,7 +51,6 @@
             <td><%= o.getId() %></td>
             <td><%= o.getUserId() %></td>
             <td>MMK<%= o.getTotal() %></td>
-            <td><%= o.getStatus() %></td>
             <td><%= o.getCreatedAt() %></td>
         </tr>
         <% } %>

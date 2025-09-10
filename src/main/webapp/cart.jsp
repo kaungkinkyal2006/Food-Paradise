@@ -17,6 +17,13 @@
     // Check if December discount is applicable
     boolean isDecemberDiscount = Order.isDecemberDiscountApplicable();
     double discountPercentage = Order.getDecemberDiscountPercentage();
+
+    
+    // Rainy season discount (April to October)
+    java.time.LocalDate todayDate = java.time.LocalDate.now();
+    boolean isRainyDiscount = todayDate.getMonthValue() >= 4 && todayDate.getMonthValue() <= 10;
+    double rainyDiscountPercentage = 0.20;
+
 %>
 
 <!DOCTYPE html>
@@ -230,6 +237,13 @@
         <p>Enjoy 10% OFF on all orders during December!</p>
     </div>
     <% } %>
+    <% if(isRainyDiscount) { %>
+<div class="december-discount-banner" style="background: linear-gradient(135deg, #17a2b8, #28a745);">
+    <h3>☔ Rainy Season Special! ☔</h3>
+    <p>Enjoy 20% OFF on all orders during the rainy season!</p>
+</div>
+<% } %>
+
 
     <% if(cart.isEmpty()){ %>
     <p>Your cart is empty.</p>
@@ -283,17 +297,65 @@
             <input type="tel" id="phone" name="phone" placeholder="+959XXXXXXXXX" pattern="\+959\d{7,9}" required>
         </div>
 
+        <!-- Location Fields -->
+<div class="location-field">
+    <label for="city">City:</label>
+    <select id="city" name="city" required onchange="updateDeliveryFee()">
+        <option value="">Select City</option>
+        <option value="Yangon">Yangon</option>
+        <option value="Mandalay">Mandalay</option>
+        <option value="Taunggyi">Taunggyi</option>
+        <option value="Naypyitaw">Naypyitaw</option>
+    </select>
+</div>
+
+<div class="street-field" style="margin-top:10px;">
+    <label for="street">Street Address:</label>
+    <input type="text" id="street" name="street" placeholder="Enter street address" required>
+</div>
+
+<div class="delivery-fee" style="margin-top:10px;">
+    <span>Delivery Fee: </span><span id="deliveryFeeDisplay">MMK0.00</span>
+</div>
+
+
         <div class="button-group">
-            <button type="button" class="print-btn" onclick="printReceipt()">Print Receipt</button>
             <input type="hidden" name="totalAmount" id="totalAmount" value="0">
             <input type="hidden" name="originalAmount" id="originalAmount" value="0">
             <input type="hidden" name="discountAmount" id="discountAmountHidden" value="0">
             <input type="hidden" name="isDecemberDiscount" value="<%= isDecemberDiscount %>">
-            <button type="submit" class="checkout-btn" id="checkoutBtn" disabled>Pay with KBZpay</button>
+            <button type="button" class="checkout-btn" id="checkoutBtn" disabled onclick="confirmKBZPayment()">Pay with KBZpay</button>
         </div>
     </form>
     <% } %>
 </main>
+
+<!-- Receipt Confirmation Modal -->
+<div id="receiptModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+    <div class="modal-content" style="background:white; padding:20px; max-width:500px; width:90%; border-radius:10px; position:relative;">
+        <h2>Confirm Your Order</h2>
+        <div id="modalReceiptContent" style="max-height:400px; overflow-y:auto; margin:15px 0;">
+            <!-- Receipt content will be injected here -->
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:10px;">
+            <button onclick="cancelOrder()" style="padding:8px 15px;">Cancel</button>
+            <button onclick="confirmOrder()" style="padding:8px 15px; background:#28a745; color:white; border:none; border-radius:5px;">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<!-- Print Confirmation Modal -->
+<div id="printModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+    <div class="modal-content" style="background:white; padding:20px; max-width:400px; width:90%; border-radius:10px; text-align:center;">
+        <h2>Order Confirmation</h2>
+        <p>Do you want to print or save your receipt?</p>
+        <div style="display:flex; justify-content:center; gap:10px; margin-top:15px;">
+            <button onclick="closePrintModal()" style="padding:8px 15px;">No</button>
+            <button onclick="printConfirmedReceipt()" style="padding:8px 15px; background:#28a745; color:white; border:none; border-radius:5px;">Yes</button>
+        </div>
+    </div>
+</div>
+
 
 <!-- Hidden printable receipt -->
 <div class="printable-receipt" id="printableReceipt">
@@ -338,121 +400,167 @@
 </div>
 
 <script>
-    const isDecemberDiscount = <%= isDecemberDiscount %>;
-    const discountPercentage = <%= discountPercentage %>;
+const isDecemberDiscount = <%= isDecemberDiscount %>;
+const discountPercentage = <%= discountPercentage %>;
 
-    function updateTotals() {
-        let subtotal = 0;
+// Rainy Season Discount
+const today = new Date();
+const utc = today.getTime() + today.getTimezoneOffset() * 60000;
+const myanmarTime = new Date(utc + 6.5 * 60 * 60000); // Myanmar +6:30
+const month = myanmarTime.getMonth() + 1;
+const isRainyDiscount = month >= 4 && month <= 10;
+const rainyDiscountPercentage = 0.20;
 
-        document.querySelectorAll('.cart-card').forEach(card => {
-            const priceElement = card.querySelector('.cart-card-content .price');
-            const priceText = priceElement ? priceElement.textContent.replace('MMK', '') : '0';
-            const price = parseFloat(priceText);
-
-            const qtyInput = card.querySelector('.quantity-input');
-            const qty = qtyInput ? parseInt(qtyInput.value) : 1;
-
-            const itemSubtotal = price * qty;
-
-            const subtotalElement = card.querySelector('.subtotal');
-            if (subtotalElement) {
-                subtotalElement.textContent = 'MMK' + itemSubtotal.toFixed(2);
-            }
-
-            subtotal += itemSubtotal;
-        });
-
-        // Calculate discount and final total
-        let discountAmount = 0;
-        let finalTotal = subtotal;
-
-        if (isDecemberDiscount) {
-            discountAmount = subtotal * discountPercentage;
-            finalTotal = subtotal - discountAmount;
-
-            document.getElementById('discountAmount').textContent = '-MMK' + discountAmount.toFixed(2);
-            document.getElementById('discountAmountHidden').value = discountAmount.toFixed(2);
-        }
-
-        // Update display
-        document.getElementById('subtotal').textContent = 'MMK' + subtotal.toFixed(2);
-        document.getElementById('total').textContent = 'MMK' + finalTotal.toFixed(2);
-        document.getElementById('totalAmount').value = finalTotal.toFixed(2);
-        document.getElementById('originalAmount').value = subtotal.toFixed(2);
+// Delivery Fee
+let deliveryFee = 0;
+function updateDeliveryFee() {
+    const city = document.getElementById('city')?.value || '';
+    switch(city) {
+        case "Taunggyi": deliveryFee = 3000; break;
+        case "Yangon":
+        case "Mandalay":
+        case "Naypyitaw": deliveryFee = 5000; break;
+        default: deliveryFee = 0;
     }
-
-    function validatePhone() {
-        const phoneInput = document.getElementById('phone').value;
-        const pattern = /^\+959\d{7,9}$/;
-        return pattern.test(phoneInput);
-    }
-
-    function toggleCheckoutButton() {
-        const btn = document.getElementById('checkoutBtn');
-        btn.disabled = !validatePhone();
-    }
-
-    function printReceipt() {
-        updateReceiptData();
-        document.getElementById('printableReceipt').style.display = 'block';
-        window.print();
-        setTimeout(() => {
-            document.getElementById('printableReceipt').style.display = 'none';
-        }, 1000);
-    }
-
-    function updateReceiptData() {
-        const now = new Date();
-        document.getElementById('receiptDate').textContent = now.toLocaleString();
-
-        const phone = document.getElementById('phone').value || 'Not provided';
-        document.getElementById('receiptPhone').textContent = phone;
-
-        const receiptItemsContainer = document.getElementById('receiptItems');
-        receiptItemsContainer.innerHTML = '';
-
-        let subtotal = 0;
-        document.querySelectorAll('.cart-card').forEach(card => {
-            const nameElement = card.querySelector('.cart-card-content h4');
-            const name = nameElement ? nameElement.textContent.trim() : 'Unknown Item';
-
-            const priceElement = card.querySelector('.cart-card-content .price');
-            const priceText = priceElement ? priceElement.textContent.replace('MMK', '') : '0';
-            const price = parseFloat(priceText);
-
-            const qtyInput = card.querySelector('.quantity-input');
-            const qty = qtyInput ? parseInt(qtyInput.value) : 1;
-
-            const itemSubtotal = price * qty;
-            subtotal += itemSubtotal;
-
-            const itemDiv = document.createElement('div');
-            itemDiv.className = 'receipt-item';
-            itemDiv.innerHTML = '<span class="receipt-item-name">' + name + '</span><span class="receipt-item-qty">' + qty + 'x</span><span class="receipt-item-price">MMK' + itemSubtotal.toFixed(2) + '</span>';
-            receiptItemsContainer.appendChild(itemDiv);
-        });
-
-        // Update receipt totals
-        document.getElementById('receiptSubtotalAmount').textContent = 'MMK' + subtotal.toFixed(2);
-
-        let finalTotal = subtotal;
-        if (isDecemberDiscount) {
-            const discountAmount = subtotal * discountPercentage;
-            finalTotal = subtotal - discountAmount;
-            document.getElementById('receiptDiscountAmount').textContent = '-MMK' + discountAmount.toFixed(2);
-        }
-
-        document.getElementById('receiptTotal').textContent = 'MMK' + finalTotal.toFixed(2);
-    }
-
-    // Initialize totals and event listeners
+    const feeDisplay = document.getElementById('deliveryFeeDisplay');
+    if(feeDisplay) feeDisplay.textContent = 'MMK' + deliveryFee.toFixed(2);
     updateTotals();
+}
 
-    document.querySelectorAll('.quantity-input').forEach(input => {
-        input.addEventListener('input', updateTotals);
+// Totals Calculation
+function updateTotals() {
+    let subtotal = 0;
+    document.querySelectorAll('.cart-card').forEach(card => {
+        const price = parseFloat(card.querySelector('.cart-card-content .price')?.textContent.replace('MMK','') || 0);
+        const qty = parseInt(card.querySelector('.quantity-input')?.value || 1);
+        const itemSubtotal = price * qty;
+        const subtotalElem = card.querySelector('.subtotal');
+        if(subtotalElem) subtotalElem.textContent = 'MMK' + itemSubtotal.toFixed(2);
+        subtotal += itemSubtotal;
     });
 
-    document.getElementById('phone').addEventListener('input', toggleCheckoutButton);
+    const decemberDiscountAmount = isDecemberDiscount ? subtotal * discountPercentage : 0;
+    const rainyDiscountAmount = isRainyDiscount ? subtotal * rainyDiscountPercentage : 0;
+    const totalDiscount = decemberDiscountAmount + rainyDiscountAmount;
+    const finalTotal = subtotal - totalDiscount + deliveryFee;
+
+    document.getElementById('subtotal').textContent = 'MMK' + subtotal.toFixed(2);
+    const discountElem = document.getElementById('discountAmount');
+    if(discountElem) discountElem.textContent = '-MMK' + totalDiscount.toFixed(2);
+    document.getElementById('total').textContent = 'MMK' + finalTotal.toFixed(2);
+
+    document.getElementById('discountAmountHidden').value = totalDiscount.toFixed(2);
+    document.getElementById('totalAmount').value = finalTotal.toFixed(2);
+    document.getElementById('originalAmount').value = subtotal.toFixed(2);
+}
+
+// Update Receipt
+function updateReceiptData() {
+    const now = new Date();
+    const phoneValue = document.getElementById('phone')?.value || 'Not provided';
+    document.getElementById('receiptDate').textContent = now.toLocaleString();
+    document.getElementById('receiptPhone').textContent = phoneValue;
+
+    const receiptItemsContainer = document.getElementById('receiptItems');
+    if(!receiptItemsContainer) return;
+    receiptItemsContainer.innerHTML = '';
+
+    let subtotal = 0;
+
+    document.querySelectorAll('.cart-card').forEach(card => {
+    const nameElement = card.querySelector('.cart-card-content h4');
+    const name = nameElement ? nameElement.textContent.trim() : 'Unknown Item';
+
+    const priceElement = card.querySelector('.cart-card-content .price');
+    const priceText = priceElement ? priceElement.textContent.replace('MMK', '') : '0';
+    const price = parseFloat(priceText);
+
+    const qtyInput = card.querySelector('.quantity-input');
+    const qty = qtyInput ? parseInt(qtyInput.value) : 1;
+
+    const itemSubtotal = price * qty;
+    subtotal += itemSubtotal;
+
+    const itemDiv = document.createElement('div');
+    itemDiv.className = 'receipt-item';
+    itemDiv.innerHTML = '<span class="receipt-item-name">' + name + '</span><span class="receipt-item-qty">' + qty + 'x</span><span class="receipt-item-price">MMK' + itemSubtotal.toFixed(2) + '</span>';
+    receiptItemsContainer.appendChild(itemDiv);
+});
+
+    // Delivery fee
+    if(deliveryFee > 0){
+        const deliveryDiv = document.createElement('div');
+        deliveryDiv.className = 'receipt-item';
+        deliveryDiv.innerHTML = `
+            <span class="receipt-item-name">Delivery Fee</span>
+            <span class="receipt-item-qty"></span>
+            <span class="receipt-item-price">MMK${deliveryFee.toFixed(2)}</span>`;
+        receiptItemsContainer.appendChild(deliveryDiv);
+    }
+
+    const decemberDiscountAmount = isDecemberDiscount ? subtotal * discountPercentage : 0;
+    const rainyDiscountAmount = isRainyDiscount ? subtotal * rainyDiscountPercentage : 0;
+    const totalDiscount = decemberDiscountAmount + rainyDiscountAmount;
+    const finalTotal = subtotal - totalDiscount + deliveryFee;
+
+    document.getElementById('receiptSubtotalAmount').textContent = 'MMK' + subtotal.toFixed(2);
+    const receiptDiscountElem = document.getElementById('receiptDiscountAmount');
+    if(receiptDiscountElem) receiptDiscountElem.textContent = '-MMK' + totalDiscount.toFixed(2);
+    document.getElementById('receiptTotal').textContent = 'MMK' + finalTotal.toFixed(2);
+}
+
+
+
+// Payment & Printing
+function confirmKBZPayment() { 
+    updateReceiptData(); document.getElementById('printModal').style.display = 'flex'; }
+function confirmOrder() { document.getElementById('receiptModal').style.display = 'none'; document.getElementById('cartForm').submit(); }
+function cancelOrder() { document.getElementById('receiptModal').style.display = 'none'; }
+function closePrintModal() { document.getElementById('printModal').style.display = 'none'; showConfirmOrderModal(); }
+function printConfirmedReceipt() { 
+    const printable = document.getElementById('printableReceipt'); 
+    printable.style.display = 'block'; 
+    window.print(); 
+    setTimeout(() => { printable.style.display = 'none'; showConfirmOrderModal(); }, 1000); 
+}
+function showConfirmOrderModal() {
+    const modalContent = document.getElementById('modalReceiptContent');
+    const printable = document.getElementById('printableReceipt');
+    const receiptModal = document.getElementById('receiptModal');
+    if(modalContent && printable) modalContent.innerHTML = printable.innerHTML;
+    if(receiptModal) receiptModal.style.display = 'flex';
+}
+
+// Phone Validation & Checkout Button
+function validatePhone() { return /^\+959\d{7,9}$/.test(document.getElementById('phone')?.value || ''); }
+function toggleCheckoutButton() {
+    const phoneValid = validatePhone();
+    const cityFilled = (document.getElementById('city')?.value || '') !== '';
+    const streetFilled = (document.getElementById('street')?.value || '').trim() !== '';
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    if(checkoutBtn) checkoutBtn.disabled = !(phoneValid && cityFilled && streetFilled);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    updateReceiptData();
+});
+
+
+// Event Listeners
+document.querySelectorAll('.quantity-input').forEach(input => input.addEventListener('input', updateTotals));
+document.getElementById('city')?.addEventListener('change', () => { updateDeliveryFee(); toggleCheckoutButton(); });
+document.getElementById('street')?.addEventListener('input', toggleCheckoutButton);
+document.getElementById('phone')?.addEventListener('input', toggleCheckoutButton);
+
+// Initial Run
+updateDeliveryFee();
+updateTotals();
+toggleCheckoutButton();
 </script>
+
+
+
+
+
 </body>
 </html>
