@@ -8,6 +8,8 @@ public class Order {
     private int userId;
     private double total;
 
+    private String phone;
+
     private Timestamp createdAt;
     private double originalTotal; // Store original total before discount
     private double discountAmount; // Store discount amount
@@ -77,4 +79,7 @@ public class Order {
 
     public String getDiscountReason() { return discountReason; }
     public void setDiscountReason(String discountReason) { this.discountReason = discountReason; }
+
+    public String getPhone() { return phone; }
+public void setPhone(String phone) { this.phone = phone; }
 }

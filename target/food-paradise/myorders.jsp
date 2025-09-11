@@ -25,19 +25,33 @@
 <body>
 <header class="header">
     <nav class="navbar">
-        <div class="logo">Food <p style="color:white;">Paradise</p></div>
+        <div class="logo">Food <p style="color: white;">Paradise</p></div>
         <ul class="nav-links">
             <li><a href="menu.jsp">Find Food</a></li>
             <li><a href="myorders.jsp">My Orders</a></li>
             <li><a href="cart.jsp">Cart</a></li>
         </ul>
         <div class="search-cart">
-            <input type="search" class="search-box" placeholder="Search by name...">
-            <button class="cart-icon" onclick="location.href='cart.jsp'">🛒</button>
-            <button class="login-btn" onclick="location.href='index.jsp'">Login</button>
+        
+            <!-- Login/Logout Button -->
+            <%
+                // Check if user is logged in
+                if(user != null){
+            %>
+                <form method="get" action="logout" style="display:inline;">
+                    <button type="submit" class="login-btn">Logout</button>
+                </form>
+            <%
+                } else {
+            %>
+                <button class="login-btn" onclick="location.href='index.jsp'">Login</button>
+            <%
+                }
+            %>
         </div>
     </nav>
 </header>
+
 
 <main class="container">
     <h2>Your Orders</h2>

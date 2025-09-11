@@ -114,18 +114,28 @@ public class AddOrderServlet extends HttpServlet {
             orderItems.add(new OrderItem(0, 0, item.getId(), item.getQuantity(), item.getPrice()));
         }
 
-        // Apply December discount
+        // === Apply Discounts ===
         double discountAmount = 0;
         double finalTotal = originalTotal;
         String discountReason = "";
-        boolean isDecemberDiscount = false;
+        boolean hasDiscount = false;
 
         LocalDate currentDate = LocalDate.now();
-        if (currentDate.getMonthValue() == 12) {
-            discountAmount = originalTotal * 0.10;
+        int month = currentDate.getMonthValue();
+
+        if (month == 12) {
+            discountAmount += originalTotal * 0.10;
+            discountReason += "December Discount (10%) ";
+            hasDiscount = true;
+        }
+        if (month >= 4 && month <= 10) {
+            discountAmount += originalTotal * 0.20;
+            discountReason += "Rainy Season Discount (20%) ";
+            hasDiscount = true;
+        }
+
+        if (discountAmount > 0) {
             finalTotal = originalTotal - discountAmount;
-            discountReason = "December Special Discount (10%)";
-            isDecemberDiscount = true;
         }
 
         // Create order in DB
@@ -134,7 +144,7 @@ public class AddOrderServlet extends HttpServlet {
         try {
             success = dao.createOrderWithDiscount(
                     user.getId(), orderItems, originalTotal,
-                    discountAmount, discountReason, finalTotal, phone
+                    discountAmount, discountReason.trim(), finalTotal, phone
             );
         } catch (Exception e) {
             System.out.println("Fallback createOrder method: " + e.getMessage());
@@ -152,8 +162,8 @@ public class AddOrderServlet extends HttpServlet {
                         ps.setInt(3, item.getQuantity());
                         int rows = ps.executeUpdate();
                         if (rows == 0) {
-                            request.getSession().setAttribute("error", 
-                                "Order processing failed due to stock sync issue. Please try again.");
+                            request.getSession().setAttribute("error",
+                                    "Order processing failed due to stock sync issue. Please try again.");
                             response.sendRedirect("cart.jsp");
                             return;
                         }
@@ -170,16 +180,15 @@ public class AddOrderServlet extends HttpServlet {
             request.getSession().setAttribute("lastOrderOriginalTotal", originalTotal);
             request.getSession().setAttribute("lastOrderDiscountAmount", discountAmount);
             request.getSession().setAttribute("lastOrderFinalTotal", finalTotal);
-            request.getSession().setAttribute("lastOrderDiscountReason", discountReason);
+            request.getSession().setAttribute("lastOrderDiscountReason", discountReason.trim());
             request.getSession().setAttribute("lastOrderPhone", phone);
-            request.getSession().setAttribute("isDecemberDiscount", isDecemberDiscount);
 
             request.getSession().removeAttribute("cart");
 
-            if (isDecemberDiscount) {
+            if (hasDiscount) {
                 request.getSession().setAttribute("success",
-                        String.format("Order placed successfully! 🎄 You saved MMK%.2f with December discount! Final total: MMK%.2f",
-                                discountAmount, finalTotal));
+                        String.format("Order placed successfully! 🎉 You saved MMK%.2f (%s) Final total: MMK%.2f",
+                                discountAmount, discountReason.trim(), finalTotal));
             } else {
                 request.getSession().setAttribute("success",
                         String.format("Order placed successfully! Total: MMK%.2f", finalTotal));

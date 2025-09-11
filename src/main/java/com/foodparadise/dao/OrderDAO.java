@@ -86,53 +86,65 @@ public class OrderDAO {
     }
 
     // Get orders by user
-    public List<Order> getOrdersByUser(int userId) {
-        List<Order> orders = new ArrayList<>();
-        String sql = "SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC";
+public List<Order> getOrdersByUser(int userId) {
+    List<Order> orders = new ArrayList<>();
+    String sql = "SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC";
 
-        try(Connection conn = DB.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql)) {
+    try (Connection conn = DB.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setInt(1, userId);
-            ResultSet rs = ps.executeQuery();
-            while(rs.next()) {
-                Order o = new Order();
-                o.setId(rs.getInt("id"));
-                o.setUserId(rs.getInt("user_id"));
-                o.setTotal(rs.getDouble("total"));
-                o.setCreatedAt(rs.getTimestamp("created_at"));
-                orders.add(o);
-            }
-        } catch(Exception e) {
-            e.printStackTrace();
+        ps.setInt(1, userId);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            Order o = new Order();
+            o.setId(rs.getInt("id"));
+            o.setUserId(rs.getInt("user_id"));
+            o.setTotal(rs.getDouble("total"));
+            o.setCreatedAt(rs.getTimestamp("created_at"));
+
+            // ✅ new fields
+            o.setOriginalTotal(rs.getDouble("original_total"));
+            o.setDiscountAmount(rs.getDouble("discount_amount"));
+            o.setDiscountReason(rs.getString("discount_reason"));
+
+            orders.add(o);
         }
-
-        return orders;
+    } catch (Exception e) {
+        e.printStackTrace();
     }
 
-    // Get all orders
-    public List<Order> getAllOrders() {
-        List<Order> orders = new ArrayList<>();
-        String sql = "SELECT * FROM orders ORDER BY created_at DESC";
+    return orders;
+}
 
-        try(Connection conn = DB.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql)) {
+// Get all orders
+public List<Order> getAllOrders() {
+    List<Order> orders = new ArrayList<>();
+    String sql = "SELECT * FROM orders ORDER BY created_at DESC";
 
-            ResultSet rs = ps.executeQuery();
-            while(rs.next()) {
-                Order o = new Order();
-                o.setId(rs.getInt("id"));
-                o.setUserId(rs.getInt("user_id"));
-                o.setTotal(rs.getDouble("total"));
-                o.setCreatedAt(rs.getTimestamp("created_at"));
-                orders.add(o);
-            }
-        } catch(Exception e) {
-            e.printStackTrace();
+    try (Connection conn = DB.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            Order o = new Order();
+            o.setId(rs.getInt("id"));
+            o.setUserId(rs.getInt("user_id"));
+            o.setTotal(rs.getDouble("total"));
+            o.setCreatedAt(rs.getTimestamp("created_at"));
+
+            // ✅ new fields
+            o.setOriginalTotal(rs.getDouble("original_total"));
+            o.setDiscountAmount(rs.getDouble("discount_amount"));
+            o.setDiscountReason(rs.getString("discount_reason"));
+
+            orders.add(o);
         }
-
-        return orders;
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+
+    return orders;
+}
 
     // Note: updateOrderStatus is removed because status column no longer exists
 }

@@ -31,202 +31,40 @@
 <head>
     <meta charset="UTF-8">
     <title>Your Cart — Food Paradise</title>
-    <link rel="stylesheet" href="assets/cart.css">
-    <style>
-        .phone-field { margin: 15px 0; }
-        .phone-field input { padding: 8px; width: 200px; }
-        .checkout-btn:disabled { background-color: #ccc; cursor: not-allowed; }
-
-        .print-btn {
-            background: #28a745;
-            color: white;
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-left: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .print-btn:hover {
-            background: #218838;
-        }
-
-        .button-group {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        /* December discount styles */
-        .december-discount-banner {
-            background: linear-gradient(135deg, #dc3545, #28a745);
-            color: white;
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            animation: pulse 2s infinite;
-        }
-
-        .december-discount-banner h3 {
-            margin: 0 0 0.5rem 0;
-            font-size: 1.2rem;
-        }
-
-        .december-discount-banner p {
-            margin: 0;
-            font-size: 0.9rem;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
-        }
-
-        .discount-breakdown {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 1rem;
-            margin: 1rem 0;
-        }
-
-        .discount-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-        }
-
-        .discount-row.total {
-            border-top: 2px solid #333;
-            padding-top: 0.5rem;
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
-        .discount-amount {
-            color: #28a745;
-            font-weight: bold;
-        }
-
-        /* Print styles - only show receipt content when printing */
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-
-            .printable-receipt, .printable-receipt * {
-                visibility: visible;
-            }
-
-            .printable-receipt {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                background: white;
-                padding: 20px;
-            }
-
-            .no-print {
-                display: none !important;
-            }
-        }
-
-        /* Receipt styling */
-        .printable-receipt {
-            display: none;
-            max-width: 400px;
-            margin: 0 auto;
-            font-family: 'Courier New', monospace;
-            line-height: 1.4;
-        }
-
-        .receipt-header {
-            text-align: center;
-            border-bottom: 2px solid #333;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-
-        .receipt-header h1 {
-            font-size: 18px;
-            margin: 0;
-        }
-
-        .receipt-header p {
-            margin: 5px 0;
-            font-size: 12px;
-        }
-
-        .receipt-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-            font-size: 12px;
-        }
-
-        .receipt-item-name {
-            flex: 1;
-        }
-
-        .receipt-item-qty {
-            width: 30px;
-            text-align: center;
-        }
-
-        .receipt-item-price {
-            width: 60px;
-            text-align: right;
-        }
-
-        .receipt-separator {
-            border-top: 1px dashed #333;
-            margin: 10px 0;
-        }
-
-        .receipt-discount {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: #28a745;
-            margin-bottom: 5px;
-        }
-
-        .receipt-total {
-            display: flex;
-            justify-content: space-between;
-            font-weight: bold;
-            font-size: 14px;
-            border-top: 2px solid #333;
-            padding-top: 5px;
-            margin-top: 10px;
-        }
-
-        .receipt-footer {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 10px;
-            border-top: 1px solid #333;
-            padding-top: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="assets/cart.css?v=1.0">
+   
 </head>
 <body>
-<header class="topbar no-print">
-    <h1>Your Cart</h1>
-    <nav>
-        <a href="menu.jsp">Menu</a>
-        <a href="cart.jsp">Cart</a>
-        <a href="myorders.jsp">My Orders</a>
-        <a href="logout">Logout</a>
-    </nav>
-</header>
+<header class="header">
+        <nav class="navbar">
+            <div class="logo">
+                🍽️ Food <p>Paradise</p>
+            </div>
+            <ul class="nav-links">
+                <li><a href="menu.jsp">🍽️ Menu</a></li>
+                <li><a href="myorders.jsp">📋 My Orders</a></li>
+            </ul>
+            <div class="search-cart">
+                
+
+                <!-- Login/Logout Button -->
+                <%
+                    
+                    if(user != null){
+                %>
+                    <form method="get" action="logout" style="display:inline;">
+                        <button type="submit" class="login-btn">👋 Logout</button>
+                    </form>
+                <%
+                    } else {
+                %>
+                    <button class="login-btn" onclick="location.href='index.jsp'">🔐 Login</button>
+                <%
+                    }
+                %>
+            </div>
+        </nav>
+    </header>
 
 <main class="container no-print">
     <h2>Items in Your Cart</h2>
@@ -275,21 +113,25 @@
         </div>
 
         <div class="discount-breakdown">
-            <div class="discount-row">
-                <span>Subtotal:</span>
-                <span id="subtotal">MMK0.00</span>
-            </div>
-            <% if(isDecemberDiscount) { %>
-            <div class="discount-row">
-                <span>December Discount (10%):</span>
-                <span class="discount-amount" id="discountAmount">-MMK0.00</span>
-            </div>
-            <% } %>
-            <div class="discount-row total">
-                <span>Total:</span>
-                <span id="total">MMK0.00</span>
-            </div>
-        </div>
+   
+    <% if(isDecemberDiscount) { %>
+    <div class="discount-row">
+        <span>December Discount (10%):</span>
+        <span class="discount-amount" id="decemberDiscountAmount">-MMK0.00</span>
+    </div>
+    <% } %>
+    <% if(isRainyDiscount) { %>
+    <div class="discount-row">
+        <span>Rainy Season Discount (20%):</span>
+        <span class="discount-amount" id="rainyDiscountAmount">-MMK0.00</span>
+    </div>
+    <% } %>
+    <div class="discount-row total">
+        <span>Total:</span>
+        <span id="total">MMK0.00</span>
+    </div>
+</div>
+
 
         <!-- Phone Number Field -->
         <div class="phone-field">
@@ -373,21 +215,28 @@
     <div class="receipt-separator"></div>
 
     <div id="receiptSubtotal" style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px;">
-        <span>Subtotal:</span>
-        <span id="receiptSubtotalAmount">MMK0.00</span>
-    </div>
+    <span>Subtotal:</span>
+    <span id="receiptSubtotalAmount">MMK0.00</span>
+</div>
 
     <% if(isDecemberDiscount) { %>
-    <div class="receipt-discount">
-        <span>December Discount (10%):</span>
-        <span id="receiptDiscountAmount">-MMK0.00</span>
-    </div>
-    <% } %>
+<div class="receipt-discount">
+    <span>December Discount (10%):</span>
+    <span id="receiptDecemberDiscountAmount">-MMK0.00</span>
+</div>
+<% } %>
+
+<% if(isRainyDiscount) { %>
+<div class="receipt-discount">
+    <span>Rainy Season Discount (20%):</span>
+    <span id="receiptRainyDiscountAmount">-MMK0.00</span>
+</div>
+<% } %>
 
     <div class="receipt-total">
-        <span>TOTAL:</span>
-        <span id="receiptTotal">MMK0.00</span>
-    </div>
+    <span>TOTAL:</span>
+    <span id="receiptTotal">MMK0.00</span>
+</div>
 
     <div class="receipt-footer">
         <p>Thank you for your order!</p>
@@ -398,6 +247,20 @@
         <p>Payment Method: KBZpay</p>
     </div>
 </div>
+
+<footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">🍽️ Food <span>Paradise</span></div>
+            <ul class="footer-links">
+                <li><a href="menu.jsp">🏠 Home</a></li>
+                <li><a href="menu.jsp">📖 Menu</a></li>
+                <li><a href="myorders.jsp">📋 My Orders</a></li>
+                <li><a href="cart.jsp">🛒 Cart</a></li>
+                <li><a href="index.jsp">🔐 Account</a></li>
+            </ul>
+            <p class="footer-copy">© 2025 Food Paradise. Delivering happiness, one meal at a time! 🍽️❤️</p>
+        </div>
+    </footer>
 
 <script>
 const isDecemberDiscount = <%= isDecemberDiscount %>;
@@ -444,10 +307,21 @@ function updateTotals() {
     const totalDiscount = decemberDiscountAmount + rainyDiscountAmount;
     const finalTotal = subtotal - totalDiscount + deliveryFee;
 
-    document.getElementById('subtotal').textContent = 'MMK' + subtotal.toFixed(2);
-    const discountElem = document.getElementById('discountAmount');
-    if(discountElem) discountElem.textContent = '-MMK' + totalDiscount.toFixed(2);
-    document.getElementById('total').textContent = 'MMK' + finalTotal.toFixed(2);
+    if(document.getElementById('decemberDiscountAmount')) {
+    document.getElementById('decemberDiscountAmount').textContent = '-MMK' + decemberDiscountAmount.toFixed(2);
+}
+if(document.getElementById('rainyDiscountAmount')) {
+    document.getElementById('rainyDiscountAmount').textContent = '-MMK' + rainyDiscountAmount.toFixed(2);
+}
+document.getElementById('total').textContent = 'MMK' + finalTotal.toFixed(2);
+
+    if(document.getElementById('receiptDecemberDiscountAmount')) {
+    document.getElementById('receiptDecemberDiscountAmount').textContent = '-MMK' + decemberDiscountAmount.toFixed(2);
+}
+if(document.getElementById('receiptRainyDiscountAmount')) {
+    document.getElementById('receiptRainyDiscountAmount').textContent = '-MMK' + rainyDiscountAmount.toFixed(2);
+}
+document.getElementById('receiptTotal').textContent = 'MMK' + finalTotal.toFixed(2);
 
     document.getElementById('discountAmountHidden').value = totalDiscount.toFixed(2);
     document.getElementById('totalAmount').value = finalTotal.toFixed(2);
