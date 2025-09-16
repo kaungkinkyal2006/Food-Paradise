@@ -31,7 +31,7 @@ public class AuthServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if ("/logout".equals(req.getServletPath())) {
             req.getSession().invalidate();
-            resp.sendRedirect(req.getContextPath() + "/index.jsp");
+            resp.sendRedirect(req.getContextPath() + "/auth.jsp");
         } else {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
         }

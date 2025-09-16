@@ -1,0 +1,633 @@
+/* cart.css - Food Paradise Light Theme for Cart Page */
+
+/* RESET / BASE (matching menu.css) */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: #fefefe;
+  background-image: 
+    radial-gradient(circle at 25% 25%, #fff8f0 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, #f9f6f1 0%, transparent 50%);
+  min-height: 100vh;
+  overflow-x: hidden;
+  color: #5d4037;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* GLOBAL UTILITIES (matching menu.css) */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* HEADER / NAV (matching menu.css) */
+.header {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #e8e8e8;
+  padding: 1rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 2px 10px rgba(93, 64, 55, 0.1);
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.logo {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #d84315;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.logo p {
+  display: inline-block;
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #8d6e63;
+  line-height: 1;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.6rem;
+  list-style: none;
+}
+.nav-links a {
+  color: #5d4037;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s, transform 0.15s;
+  position: relative;
+}
+.nav-links a:hover {
+  color: #d84315;
+  transform: translateY(-2px);
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #d84315;
+  transition: width 0.3s;
+}
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+.login-btn {
+  margin-left: 10px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #d84315, #bf360c);
+  border: none;
+  border-radius: 25px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(216, 67, 21, 0.3);
+}
+
+/* CART HEADER */
+main.container h2 {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 800;
+  color: #3e2723;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* DISCOUNT BANNERS (styled like hero section with badge) */
+.december-discount-banner {
+  background: white;
+  border: 1px solid #f5f5f5;
+  border-radius: 20px;
+  padding: 1.5rem 2.5rem;
+  margin: 2rem 0;
+  box-shadow: 0 10px 30px rgba(93, 64, 55, 0.08);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.december-discount-banner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 193, 7, 0.05) 0%, transparent 70%);
+  animation: rotate 20s linear infinite;
+}
+.december-discount-banner h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #3e2723;
+  margin-bottom: 0.5rem;
+}
+.december-discount-banner p {
+  font-size: 1.1rem;
+  color: #6d4c41;
+  line-height: 1.7;
+}
+.december-discount-banner[style*="17a2b8"] h3 {
+  color: #28a745;
+}
+.december-discount-banner[style*="17a2b8"] p {
+  color: #17a2b8;
+}
+
+/* CART GRID (styled like menu-grid) */
+.cart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+/* CART CARD (styled like menu-card) */
+.cart-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  text-align: center;
+  cursor: default;
+  transition: all 0.3s ease;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 4px 15px rgba(93, 64, 55, 0.08);
+}
+.cart-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(93, 64, 55, 0.15);
+  border-color: #d84315;
+}
+.cart-card-content h4 {
+  color: #3e2723;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.cart-card-content .price {
+  color: #2e7d32;
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+.cart-card-content p {
+  color: #6d4c41;
+  font-size: 1rem;
+}
+
+.quantity-input {
+  width: 60px;
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+  background: #fff;
+  color: #5d4037;
+  text-align: center;
+  font-weight: 600;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.quantity-input:focus {
+  border-color: #d84315;
+  box-shadow: 0 0 0 3px rgba(216, 67, 21, 0.1);
+}
+
+.cart-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.remove-btn {
+  background: #fff;
+  border: 2px solid #d84315;
+  color: #d84315;
+  padding: 0.7rem 1.2rem;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.remove-btn:hover {
+  background: linear-gradient(135deg, #d84315, #bf360c);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(216, 67, 21, 0.3);
+}
+
+.subtotal {
+  color: #2e7d32;
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+
+/* DISCOUNT BREAKDOWN (styled like hero-price section) */
+.discount-breakdown {
+  background: #fff;
+  border-radius: 20px;
+  border: 1px solid #f5f5f5;
+  padding: 1.5rem 2.5rem;
+  margin: 2rem 0;
+  box-shadow: 0 10px 30px rgba(93, 64, 55, 0.08);
+}
+
+.discount-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.1rem;
+  color: #6d4c41;
+  margin-bottom: 0.8rem;
+}
+.discount-row.total {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #3e2723;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 0.8rem;
+}
+.discount-amount {
+  color: #d84315;
+  font-weight: 700;
+}
+
+/* PHONE AND LOCATION FIELDS (styled like search-box) */
+.phone-field, .location-field, .street-field {
+  margin: 1.5rem 0;
+}
+.phone-field label, .location-field label, .street-field label {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #3e2723;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+.phone-field input, .location-field select, .street-field input {
+  background: #fff;
+  border: 2px solid #e0e0e0;
+  border-radius: 25px;
+  padding: 0.6rem 1.2rem;
+  color: #5d4037;
+  outline: none;
+  width: 100%;
+  max-width: 400px;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.phone-field input:focus, .location-field select:focus, .street-field input:focus {
+  border-color: #d84315;
+  box-shadow: 0 0 0 3px rgba(216, 67, 21, 0.1);
+}
+.phone-field input::placeholder, .street-field input::placeholder {
+  color: #999;
+}
+
+.delivery-fee {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #3e2723;
+}
+.delivery-fee span:last-child {
+  color: #2e7d32;
+  font-weight: 700;
+}
+
+/* BUTTON GROUP (styled like hero-buttons) */
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.checkout-btn {
+  background: linear-gradient(135deg, #d84315, #bf360c);
+  color: #fff;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 30px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  min-width: 160px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(216, 67, 21, 0.3);
+}
+.checkout-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(216, 67, 21, 0.4);
+}
+.checkout-btn:disabled {
+  background: #e0e0e0;
+  color: #999;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* MODALS (styled like menu.css modal) */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(0, 0, 0, 0.5);
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+.modal-content {
+  width: 100%;
+  max-width: 500px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  color: #5d4037;
+  position: relative;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+  animation: fadeInUp 0.6s ease-out;
+}
+.modal-content h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #3e2723;
+  margin-bottom: 1rem;
+}
+.modal-content button {
+  border-radius: 30px;
+  padding: 0.8rem 1.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.modal-content button:first-child {
+  background: #fff;
+  color: #d84315;
+  border: 2px solid #d84315;
+}
+.modal-content button:first-child:hover {
+  background: #d84315;
+  color: #fff;
+  transform: translateY(-2px);
+}
+.modal-content button:last-child {
+  background: linear-gradient(135deg, #d84315, #bf360c);
+  color: #fff;
+  border: none;
+  box-shadow: 0 4px 15px rgba(216, 67, 21, 0.3);
+}
+.modal-content button:last-child:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(216, 67, 21, 0.4);
+}
+
+/* PRINTABLE RECEIPT (styled like footer and hero section) */
+.printable-receipt {
+  display: none;
+  background: #fff;
+  padding: 2rem;
+  max-width: 400px;
+  margin: 0 auto;
+  border-radius: 16px;
+  border: 1px solid #f5f5f5;
+  box-shadow: 0 10px 30px rgba(93, 64, 55, 0.08);
+  color: #5d4037;
+}
+
+.receipt-header h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #d84315;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+.receipt-header p {
+  font-size: 1rem;
+  color: #6d4c41;
+  text-align: center;
+}
+
+.receipt-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+.receipt-item-name { flex: 1; text-align: left; }
+.receipt-item-qty { margin: 0 1rem; }
+.receipt-item-price { font-weight: 600; color: #2e7d32; }
+
+.receipt-separator {
+  border-top: 1px dashed #e0e0e0;
+  margin: 1rem 0;
+}
+
+.receipt-discount, .receipt-total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+.receipt-discount span:last-child { color: #d84315; font-weight: 700; }
+.receipt-total {
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+.receipt-total span:last-child { color: #2e7d32; }
+
+.receipt-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+.receipt-footer p {
+  font-size: 1rem;
+  color: #6d4c41;
+  line-height: 1.7;
+}
+
+/* FOOTER (matching menu.css) */
+.footer {
+  background: linear-gradient(135deg, #3e2723, #2e2e2e);
+  color: #fff;
+  padding: 3rem 2rem;
+  text-align: center;
+  margin-top: 4rem;
+}
+
+.footer-logo {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  color: #d84315;
+}
+.footer-logo span {
+  color: #fff;
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+.footer-links li a {
+  color: #e0e0e0;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: color 0.3s;
+}
+.footer-links li a:hover {
+  color: #d84315;
+  text-decoration: underline;
+}
+
+.footer-copy {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* FOCUS STATES (matching menu.css) */
+button:focus, a:focus, input:focus, select:focus {
+  outline: 3px solid rgba(216, 67, 21, 0.3);
+  outline-offset: 2px;
+}
+
+/* RESPONSIVE (matching menu.css) */
+@media (max-width: 900px) {
+  .cart-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+  .phone-field input, .location-field select, .street-field input {
+    max-width: 100%;
+  }
+  .december-discount-banner {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .navbar {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .nav-links {
+    display: none;
+  }
+  .cart-grid {
+    grid-template-columns: 1fr;
+  }
+  .button-group {
+    justify-content: center;
+  }
+  .checkout-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* PRINT STYLES */
+@media print {
+  .no-print, .modal, .footer, .header {
+    display: none !important;
+  }
+  .printable-receipt {
+    display: block !important;
+    box-shadow: none;
+    border: none;
+  }
+}
+
+/* ANIMATIONS (matching menu.css) */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Expected Delivery Date Field */
+.expected-date-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  max-width: 300px;
+}
+
+.expected-date-field label {
+  font-weight: 600;
+  color: #3e2723;
+  font-size: 1rem;
+}
+
+.expected-date-field input[type="date"] {
+  padding: 0.6rem 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #5d4037;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.expected-date-field input[type="date"]:focus {
+  border-color: #d84315;
+  box-shadow: 0 0 0 3px rgba(216, 67, 21, 0.1);
+}
+
+.expected-date-field input[type="date"]::-webkit-inner-spin-button,
+.expected-date-field input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(35%) sepia(85%) saturate(500%) hue-rotate(350deg);
+  transition: filter 0.3s;
+}
+
+.expected-date-field input[type="date"]:hover::-webkit-calendar-picker-indicator {
+  filter: invert(25%) sepia(90%) saturate(600%) hue-rotate(340deg);
+}

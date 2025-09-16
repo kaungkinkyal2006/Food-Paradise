@@ -1,6 +1,6 @@
-/* login.css - Animated Login Page Without Images */
+/* login.css - Food Paradise Login Page - Standalone Version */
 
-/* RESET */
+/* RESET / BASE */
 * {
   margin: 0;
   padding: 0;
@@ -9,193 +9,475 @@
 
 html, body {
   height: 100%;
-  font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-  background: linear-gradient(135deg, #2d5016 0%, #1a3009 50%, #0f1f05 100%);
-  color: #fff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: #fefefe;
+  background-image: 
+    radial-gradient(circle at 25% 25%, #fff8f0 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, #f9f6f1 0%, transparent 50%);
+  min-height: 100vh;
   overflow: hidden;
+  color: #5d4037;
+  line-height: 1.6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
-}
-
-/* CARD */
-.card {
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(10px);
-  padding: 2.5rem 2rem;
-  border-radius: 20px;
-  max-width: 400px;
-  margin: 6rem auto;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-  position: relative;
-  z-index: 10;
-  animation: fadeInScale 0.8s ease forwards;
-}
-
-@keyframes fadeInScale {
-  0% { opacity: 0; transform: scale(0.8); }
-  100% { opacity: 1; transform: scale(1); }
-}
-
-/* FORM ELEMENTS */
-.card h2 {
-  text-align: center;
-  font-size: 2rem;
-  font-weight: 800;
-  margin-bottom: 1.5rem;
-}
-
-label {
-  display: block;
-  margin-bottom: 1rem;
-  font-weight: 600;
-}
-
-input[type="email"],
-input[type="password"] {
-  width: 100%;
-  padding: 0.7rem 1rem;
-  border-radius: 10px;
-  border: none;
-  background: rgba(255,255,255,0.1);
-  color: #fff;
-  margin-top: 0.3rem;
-  transition: all 0.3s ease;
-}
-
-input:focus {
-  background: rgba(139,195,74,0.15);
-  box-shadow: 0 0 10px rgba(139,195,74,0.5);
-}
-
-.btn {
-  display: block;
-  width: 100%;
-  margin-top: 1rem;
-  padding: 0.75rem;
-  border-radius: 999px;
-  border: none;
-  font-weight: 700;
-  font-size: 1rem;
-  cursor: pointer;
-  color: #fff;
-  background: linear-gradient(180deg,#ff6b35,#e85a2a);
-  transition: all 0.3s ease;
-}
-
-.btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(232,90,42,0.35);
 }
 
 /* FLOATING ANIMATIONS */
 
-/* Veggies - circles with colors */
+/* Floating Vegetables */
 .veggie {
-  position: fixed;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  opacity: 0.8;
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  font-size: 32px;
+  animation: floatVeggie 15s linear infinite;
   z-index: 1;
-  animation: floatVeggie 10s linear infinite;
+  opacity: 0;
 }
 
-.veggie:nth-child(odd) { background: linear-gradient(135deg,#ff6347,#ff4500); } /* tomato/red */
-.veggie:nth-child(even) { background: linear-gradient(135deg,#ffa500,#ffd700); } /* carrot/orange */
+.veggie:nth-child(1)::after { content: "🥕"; animation-delay: 0s; }
+.veggie:nth-child(2)::after { content: "🥬"; animation-delay: 3s; }
+.veggie:nth-child(3)::after { content: "🍅"; animation-delay: 6s; }
+.veggie:nth-child(4)::after { content: "🌽"; animation-delay: 9s; }
+.veggie:nth-child(5)::after { content: "🥒"; animation-delay: 12s; }
+
+.veggie:nth-child(1) { animation-delay: 0s; }
+.veggie:nth-child(2) { animation-delay: 3s; }
+.veggie:nth-child(3) { animation-delay: 6s; }
+.veggie:nth-child(4) { animation-delay: 9s; }
+.veggie:nth-child(5) { animation-delay: 12s; }
 
 @keyframes floatVeggie {
-  0% { transform: translateY(-120vh) rotate(0deg) scale(0.8); opacity:0; }
-  10% { opacity: 1; }
-  70% { opacity: 1; }
-  100% { transform: translateY(120vh) rotate(360deg) scale(1.1); opacity:0; }
+  0% {
+    transform: translateY(-120vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% { opacity: 0.7; }
+  90% { opacity: 0.7; }
+  100% {
+    transform: translateY(120vh) rotate(360deg);
+    opacity: 0;
+  }
 }
 
-/* Steam - blurred white circles */
+/* Steam Effects */
 .steam {
   position: absolute;
-  width: 20px;
-  height: 20px;
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.6) 0%, transparent 70%);
   border-radius: 50%;
-  background: rgba(255,255,255,0.3);
-  filter: blur(4px);
-  animation: floatSteam 6s ease-in-out infinite;
+  animation: steamRise 8s ease-in-out infinite;
+  z-index: 1;
+  opacity: 0;
 }
 
-@keyframes floatSteam {
-  0% { transform: translateY(0) translateX(0) scale(0.6); opacity: 0; }
-  30% { opacity: 0.6; }
-  70% { transform: translateY(-80px) translateX(10px) scale(1); opacity: 0.3; }
-  100% { transform: translateY(-160px) translateX(-10px) scale(1.2); opacity: 0; }
+.steam:nth-child(7) { animation-delay: 0s; }
+.steam:nth-child(8) { animation-delay: 2s; }
+.steam:nth-child(9) { animation-delay: 4s; }
+
+@keyframes steamRise {
+  0% {
+    transform: translateY(0) scale(0.5);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.8;
+  }
+  80% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateY(-200px) scale(1.5);
+    opacity: 0;
+  }
 }
 
-/* Leaves - green circles */
+/* Floating Leaves */
 .floating-leaf {
-  position: fixed;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: linear-gradient(135deg,#32cd32,#228b22);
-  opacity: 0.7;
-  animation: floatLeaf 12s linear infinite;
+  position: absolute;
+  width: 35px;
+  height: 35px;
+  font-size: 28px;
+  animation: floatLeaf 20s linear infinite;
+  z-index: 1;
+  opacity: 0;
 }
+
+.floating-leaf:nth-child(10)::after { content: "🍃"; }
+.floating-leaf:nth-child(11)::after { content: "🌿"; }
+.floating-leaf:nth-child(12)::after { content: "🍃"; }
+
+.floating-leaf:nth-child(10) { animation-delay: 0s; }
+.floating-leaf:nth-child(11) { animation-delay: 7s; }
+.floating-leaf:nth-child(12) { animation-delay: 14s; }
 
 @keyframes floatLeaf {
-  0% { transform: translateY(-120vh) rotate(0deg) scale(0.8); opacity:0; }
-  10% { opacity: 1; }
-  70% { opacity: 1; }
-  100% { transform: translateY(120vh) rotate(360deg) scale(1.1); opacity:0; }
+  0% {
+    transform: translateY(-120vh) rotate(0deg) translateX(0);
+    opacity: 0;
+  }
+  10% { opacity: 0.6; }
+  50% { 
+    transform: translateY(50vh) rotate(180deg) translateX(50px);
+    opacity: 0.6; 
+  }
+  90% { opacity: 0.6; }
+  100% {
+    transform: translateY(120vh) rotate(360deg) translateX(-30px);
+    opacity: 0;
+  }
 }
 
-/* Sparkles - yellow circles */
+/* Floating Sparkles */
 .floating-sparkle {
-  position: fixed;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #ffeb3b;
-  opacity: 0.8;
-  animation: floatSparkle 5s linear infinite;
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  font-size: 20px;
+  animation: sparkle 6s ease-in-out infinite;
+  z-index: 1;
 }
 
-@keyframes floatSparkle {
-  0% { transform: translateY(-50vh) scale(0.5); opacity:0; }
-  20% { opacity:1; }
-  80% { opacity:1; }
-  100% { transform: translateY(50vh) scale(1); opacity:0; }
+.floating-sparkle::after {
+  content: "✨";
 }
 
-/* Carrot */
-.veggie.carrot {
-  width: 0;
-  height: 0;
-  border-left: 12px solid transparent;
-  border-right: 12px solid transparent;
-  border-bottom: 30px solid #ff6b35; /* orange carrot */
-  border-radius: 2px;
-  animation: floatVeggie 10s linear infinite;
+.floating-sparkle:nth-child(13) { animation-delay: 0s; }
+.floating-sparkle:nth-child(14) { animation-delay: 2s; }
+.floating-sparkle:nth-child(15) { animation-delay: 4s; }
+
+@keyframes sparkle {
+  0%, 100% {
+    transform: scale(0.5) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.2) rotate(180deg);
+    opacity: 1;
+  }
 }
 
-/* Tomato */
-.veggie.tomato {
-  width: 24px;
-  height: 24px;
-  background: #e74c3c; /* red tomato */
-  border-radius: 50%;
-  animation: floatVeggie 10s linear infinite;
+/* LOGIN CARD */
+.card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 3rem;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 25px 50px rgba(93, 64, 55, 0.15);
+  border: 1px solid rgba(216, 67, 21, 0.1);
+  position: relative;
+  z-index: 100;
+  animation: slideUp 0.8s ease-out;
 }
 
-/* Chili */
-.veggie.chili {
-  width: 6px;
-  height: 20px;
-  background: #e74c3c;
-  border-radius: 3px;
-  animation: floatVeggie 10s linear infinite;
+.card::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(135deg, #d84315, #bf360c, #ff5722, #d84315);
+  border-radius: 26px;
+  z-index: -1;
+  opacity: 0;
+  animation: borderGlow 3s ease-in-out infinite;
 }
 
-/* Floating animation */
-@keyframes floatVeggie {
-  0% { transform: translateY(-120vh) rotate(0deg); opacity: 0; }
-  10% { opacity: 1; }
-  70% { opacity: 1; }
-  100% { transform: translateY(120vh) rotate(360deg); opacity: 0; }
+@keyframes borderGlow {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px) scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* FORM ELEMENTS */
+.card h2 {
+  color: #3e2723;
+  font-size: 2.2rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.card h2::after {
+  content: '🍽️';
+  display: block;
+  font-size: 1.5rem;
+  margin-top: 0.5rem;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
+}
+
+.card form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.card label {
+  color: #5d4037;
+  font-weight: 600;
+  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.card input[type="email"],
+.card input[type="password"] {
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #e0e0e0;
+  border-radius: 16px;
+  padding: 1rem 1.2rem;
+  color: #5d4037;
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.card input[type="email"]:focus,
+.card input[type="password"]:focus {
+  border-color: #d84315;
+  box-shadow: 0 0 0 4px rgba(216, 67, 21, 0.1);
+  transform: translateY(-2px);
+  background: #fff;
+}
+
+.card input[type="email"]:hover,
+.card input[type="password"]:hover {
+  border-color: #d84315;
+  transform: translateY(-1px);
+}
+
+/* LOGIN BUTTON */
+.card .btn {
+  background: linear-gradient(135deg, #d84315, #bf360c);
+  border: none;
+  border-radius: 16px;
+  padding: 1.2rem 2rem;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(216, 67, 21, 0.3);
+  margin-top: 1rem;
+  font-family: inherit;
+}
+
+.card .btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(216, 67, 21, 0.4);
+  background: linear-gradient(135deg, #e53935, #c62828);
+}
+
+.card .btn:active {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(216, 67, 21, 0.4);
+}
+
+.card .btn:focus {
+  outline: 3px solid rgba(216, 67, 21, 0.3);
+  outline-offset: 2px;
+}
+
+/* LINKS */
+.card p {
+  text-align: center;
+  color: #6d4c41;
+  margin-top: 1.5rem;
+  font-size: 1rem;
+}
+
+.card a {
+  color: #d84315;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.card a:hover {
+  color: #bf360c;
+  text-decoration: underline;
+}
+
+.card a:focus {
+  outline: 2px solid rgba(216, 67, 21, 0.3);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ERROR & SUCCESS MESSAGES */
+.card .error {
+  background: rgba(244, 67, 54, 0.1);
+  color: #c62828;
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-top: 1rem;
+  font-weight: 600;
+  text-align: center;
+  animation: shake 0.5s ease-in-out;
+}
+
+.card .success {
+  background: rgba(76, 175, 80, 0.1);
+  color: #2e7d32;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-top: 1rem;
+  font-weight: 600;
+  text-align: center;
+  animation: slideIn 0.5s ease-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Hide empty messages */
+.card .error:empty,
+.card .success:empty {
+  display: none;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 600px) {
+  body {
+    padding: 1rem;
+    overflow-y: auto;
+    min-height: 100vh;
+    align-items: flex-start;
+    padding-top: 2rem;
+  }
+  
+  .card {
+    padding: 2rem;
+    max-width: 100%;
+    margin: 1rem 0;
+  }
+  
+  .card h2 {
+    font-size: 1.8rem;
+  }
+  
+  .veggie,
+  .floating-leaf {
+    display: none; /* Hide floating elements on mobile for performance */
+  }
+  
+  .steam {
+    opacity: 0.3;
+  }
+  
+  .floating-sparkle {
+    animation-duration: 8s;
+  }
+}
+
+@media (max-width: 400px) {
+  .card {
+    padding: 1.5rem;
+  }
+  
+  .card h2 {
+    font-size: 1.6rem;
+  }
+  
+  .card input[type="email"],
+  .card input[type="password"] {
+    padding: 0.9rem 1rem;
+  }
+  
+  .card .btn {
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
+/* ACCESSIBILITY IMPROVEMENTS */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .veggie,
+  .floating-leaf,
+  .steam,
+  .floating-sparkle {
+    display: none;
+  }
+}
+
+/* HIGH CONTRAST MODE */
+@media (prefers-contrast: high) {
+  .card {
+    background: #fff;
+    border: 3px solid #d84315;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  
+  .card input[type="email"],
+  .card input[type="password"] {
+    background: #fff;
+    border-width: 3px;
+  }
+  
+  .card .btn {
+    background: #d84315;
+    border: 2px solid #000;
+  }
+}
+
+/* FALLBACK FOR OLDER BROWSERS */
+@supports not (backdrop-filter: blur(20px)) {
+  .card {
+    background: rgba(255, 255, 255, 0.98);
+  }
 }

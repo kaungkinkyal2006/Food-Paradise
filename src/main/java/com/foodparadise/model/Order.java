@@ -6,6 +6,7 @@ import java.time.LocalDate;
 public class Order {
     private int id;
     private int userId;
+    private String userName;
     private double total;
 
     private String phone;
@@ -14,6 +15,8 @@ public class Order {
     private double originalTotal; // Store original total before discount
     private double discountAmount; // Store discount amount
     private String discountReason; // Store reason for discount
+
+    private Double deliveryFee;
 
     public Order() {}
 
@@ -25,6 +28,7 @@ public class Order {
         this.originalTotal = total;
         this.discountAmount = 0.0;
         this.discountReason = "";
+        this.deliveryFee = deliveryFee;
     }
 
     // Method to calculate total with December discount
@@ -82,4 +86,14 @@ public class Order {
 
     public String getPhone() { return phone; }
 public void setPhone(String phone) { this.phone = phone; }
+
+    public Double getDeliveryFee() { return deliveryFee; }
+    public void setDeliveryFee(Double deliveryFee) { this.deliveryFee = deliveryFee; }
+
+    public String getUserName() {
+    return userName;
+}
+public void setUserName(String userName) {
+    this.userName = userName;
+}
 }

@@ -24,14 +24,14 @@ import java.util.List;
 public class AddOrderServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Check if user is logged in
+        // 1️⃣ Check if user is logged in
         User user = (User) request.getSession().getAttribute("user");
         if (user == null) {
             response.sendRedirect("login.jsp");
             return;
         }
 
-        // Get the cart from session
+        // 2️⃣ Get cart
         List<CartItem> cart = (List<CartItem>) request.getSession().getAttribute("cart");
         if (cart == null || cart.isEmpty()) {
             request.getSession().setAttribute("error", "Cart is empty!");
@@ -39,7 +39,7 @@ public class AddOrderServlet extends HttpServlet {
             return;
         }
 
-        // Get phone number from form
+        // 3️⃣ Get phone
         String phone = request.getParameter("phone");
         if (phone == null || !phone.matches("\\+959\\d{7,9}")) {
             request.getSession().setAttribute("error", "Please provide a valid phone number (+959XXXXXXXXX)");
@@ -47,7 +47,7 @@ public class AddOrderServlet extends HttpServlet {
             return;
         }
 
-        // Update quantities from form submission
+        // 4️⃣ Update quantities
         for (int i = 0; i < cart.size(); i++) {
             String qtyParam = request.getParameter("quantity_" + i);
             int quantity = 1;
@@ -60,20 +60,17 @@ public class AddOrderServlet extends HttpServlet {
             cart.get(i).setQuantity(quantity);
         }
 
+        // 5️⃣ Validate stock
         MenuDAO menuDAO = new MenuDAO();
         List<String> stockErrors = new ArrayList<>();
         boolean needsPreorder = false;
-
-        // VALIDATE STOCK & PREORDER LIMITS
         for (CartItem item : cart) {
             MenuItem menuItem = menuDAO.getMenuItemById(item.getId());
             if (menuItem == null) {
                 stockErrors.add("Item '" + item.getName() + "' not found in menu");
                 continue;
             }
-
             int availableStock = menuItem.getStock();
-
             if (availableStock == 0) {
                 stockErrors.add("'" + item.getName() + "' is out of stock");
                 needsPreorder = true;
@@ -81,32 +78,26 @@ public class AddOrderServlet extends HttpServlet {
                 stockErrors.add("Only " + availableStock + " units available for '" + item.getName() + "' (you requested " + item.getQuantity() + ")");
                 needsPreorder = true;
             }
-
-            // Check if quantity exceeds pre-order limit
             if (item.getQuantity() > 50) {
                 needsPreorder = true;
             }
         }
 
-        // Redirect to Pre-Order page if needed
         if (needsPreorder) {
             request.getSession().setAttribute("error", "⚠️ One or more items exceed available stock or 50 units. Please use the Pre-Order page.");
             response.sendRedirect("preorder.jsp");
             return;
         }
 
-        // If there are stock issues (out of stock or below limit), show error on cart page
         if (!stockErrors.isEmpty()) {
             StringBuilder errorMessage = new StringBuilder("Stock Issues Found:\n");
-            for (String error : stockErrors) {
-                errorMessage.append("• ").append(error).append("\n");
-            }
+            for (String error : stockErrors) errorMessage.append("• ").append(error).append("\n");
             request.getSession().setAttribute("error", errorMessage.toString());
             response.sendRedirect("cart.jsp");
             return;
         }
 
-        // Convert CartItem -> OrderItem and calculate totals
+        // 6️⃣ Convert CartItem -> OrderItem and calculate totals
         List<OrderItem> orderItems = new ArrayList<>();
         double originalTotal = 0;
         for (CartItem item : cart) {
@@ -114,7 +105,14 @@ public class AddOrderServlet extends HttpServlet {
             orderItems.add(new OrderItem(0, 0, item.getId(), item.getQuantity(), item.getPrice()));
         }
 
-        // === Apply Discounts ===
+        // 7️⃣ Read delivery fee from form
+        double deliveryFee = 0;
+        String deliveryFeeStr = request.getParameter("deliveryFee");
+        try {
+            if (deliveryFeeStr != null) deliveryFee = Double.parseDouble(deliveryFeeStr);
+        } catch (NumberFormatException ignored) {}
+
+        // 8️⃣ Apply discounts
         double discountAmount = 0;
         double finalTotal = originalTotal;
         String discountReason = "";
@@ -134,25 +132,23 @@ public class AddOrderServlet extends HttpServlet {
             hasDiscount = true;
         }
 
-        if (discountAmount > 0) {
-            finalTotal = originalTotal - discountAmount;
-        }
+        finalTotal = originalTotal - discountAmount + deliveryFee;
 
-        // Create order in DB
+        // 9️⃣ Create order in DB
         OrderDAO dao = new OrderDAO();
         boolean success;
         try {
             success = dao.createOrderWithDiscount(
                     user.getId(), orderItems, originalTotal,
-                    discountAmount, discountReason.trim(), finalTotal, phone
+                    discountAmount, discountReason.trim(), finalTotal, phone, deliveryFee
             );
         } catch (Exception e) {
             System.out.println("Fallback createOrder method: " + e.getMessage());
-            success = dao.createOrder(user.getId(), orderItems, finalTotal);
+            success = dao.createOrder(user.getId(), orderItems, finalTotal, deliveryFee);
         }
 
+        // 10️⃣ Update stock safely
         if (success) {
-            // Update stock safely
             try (Connection conn = DB.getConnection()) {
                 for (CartItem item : cart) {
                     String updateStockQuery = "UPDATE menu_items SET stock = stock - ? WHERE id = ? AND stock >= ?";
@@ -176,22 +172,24 @@ public class AddOrderServlet extends HttpServlet {
                 return;
             }
 
-            // Save order details for confirmation
+            // 11️⃣ Save order details for confirmation
             request.getSession().setAttribute("lastOrderOriginalTotal", originalTotal);
             request.getSession().setAttribute("lastOrderDiscountAmount", discountAmount);
             request.getSession().setAttribute("lastOrderFinalTotal", finalTotal);
             request.getSession().setAttribute("lastOrderDiscountReason", discountReason.trim());
             request.getSession().setAttribute("lastOrderPhone", phone);
+            request.getSession().setAttribute("lastOrderDeliveryFee", deliveryFee);
 
             request.getSession().removeAttribute("cart");
 
+            // 12️⃣ Success message
             if (hasDiscount) {
                 request.getSession().setAttribute("success",
-                        String.format("Order placed successfully! 🎉 You saved MMK%.2f (%s) Final total: MMK%.2f",
-                                discountAmount, discountReason.trim(), finalTotal));
+                        String.format("Order placed successfully! 🎉 You saved MMK%.2f (%s) + Delivery Fee MMK%.2f Final total: MMK%.2f",
+                                discountAmount, discountReason.trim(), deliveryFee, finalTotal));
             } else {
                 request.getSession().setAttribute("success",
-                        String.format("Order placed successfully! Total: MMK%.2f", finalTotal));
+                        String.format("Order placed successfully! Total: MMK%.2f (Delivery Fee MMK%.2f)", finalTotal, deliveryFee));
             }
 
             response.sendRedirect("MyOrdersServlet");

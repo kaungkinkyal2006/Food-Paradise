@@ -59,6 +59,7 @@
                 <li><a href="menu.jsp">🏠 Home</a></li>
                 <li><a href="menu.jsp">🍽️ Menu</a></li>
                 <li><a href="myorders.jsp">📋 My Orders</a></li>
+                <li><a href="myPreorder.jsp">📅 My Preorders</a></li>
             </ul>
             <div class="search-cart">
                 <!-- Search Bar -->
@@ -67,7 +68,7 @@
                 <!-- Cart Button with Badge -->
                 <button class="cart-icon" onclick="location.href='cart.jsp'">
                     🛒
-                    <span class="cart-badge" id="cartBadge">0</span>
+                    
                 </button>
 
                 <!-- Login/Logout Button -->
@@ -81,7 +82,7 @@
                 <%
                     } else {
                 %>
-                    <button class="login-btn" onclick="location.href='index.jsp'">Login</button>
+                    <button class="login-btn" onclick="location.href='auth.jsp'">Login</button>
                 <%
                     }
                 %>
@@ -120,6 +121,17 @@
                 </div>
             </div>
         </section>
+<!-- Pre-Order Notice Banner -->
+<div class="preorder-top-banner">
+    <div class="banner-content">
+        <span class="banner-icon">⚠️</span>
+        <p>
+            If you want to order <strong>50 or more items</strong>, please <strong>pre-order at least 3 days in advance</strong>.
+        </p>
+    </div>
+</div>
+
+
 
         <!-- Popular Menu Section -->
         <div class="popular-section">
@@ -137,7 +149,7 @@
                         </c:choose>
                         <h4>${item.name}</h4>
                         <div class="price">💰 MMK ${item.price}</div>
-                        <form action="CartServlet" method="post" style="margin-top: 8px;">
+                        <form id="cartForm${item.id}" method="post" onsubmit="return handleOrderType('${item.id}')">
                             <input type="hidden" name="id" value="${item.id}">
                             <input type="hidden" name="name" value="${item.name}">
                             <input type="hidden" name="price" value="${item.price}">
@@ -193,15 +205,19 @@
                                 ${not empty item.description ? item.description : 'Fresh and delicious, made with care'}
                             </p>
                             <div class="price">💰 MMK ${item.price}</div>
-                            <form action="CartServlet" method="post" style="margin-top: 15px;">
-                                <input type="hidden" name="id" value="${item.id}">
-                                <input type="hidden" name="name" value="${item.name}">
-                                <input type="hidden" name="price" value="${item.price}">
-                                <div class="quantity-add-section">
-                                    <input type="number" name="quantity" value="1" min="1">
-                                    <button type="submit" class="add-to-cart">🛒 Add to Cart</button>
-                                </div>
-                            </form>
+                            <div class="stock">📦 ${item.stock}</div>
+                            <form id="cartForm${item.id}" method="post" onsubmit="return handleOrderType('${item.id}')">
+    <input type="hidden" name="id" value="${item.id}">
+    <input type="hidden" name="name" value="${item.name}">
+    <input type="hidden" name="price" value="${item.price}">
+    <input type="hidden" name="quantity" value="1" id="quantity${item.id}">
+    
+    <div class="quantity-add-section">
+        <input type="number" value="1" min="1" onchange="document.getElementById('quantity${item.id}').value=this.value">
+        <button type="submit" class="add-to-cart">🛒 Add to Cart</button>
+    </div>
+</form>
+
                         </div>
                     </div>
                 </c:forEach>
@@ -211,7 +227,7 @@
         <!-- Delivery Info Banner -->
         <div style="background: linear-gradient(135deg, #e8f5e8, #f1f8e9); border-radius: 16px; padding: 2rem; margin: 3rem 0; text-align: center; border: 1px solid #c8e6c9;">
             <h3 style="color: #2e7d32; margin-bottom: 1rem; font-size: 1.4rem;">🚚 Fast & Fresh Delivery</h3>
-            <p style="color: #5d4037; margin-bottom: 1rem;">Free delivery on orders over MMK 20,000 • Average delivery time: 25-35 minutes</p>
+            <p style="color: #5d4037; margin-bottom: 1rem;">Average delivery time: 25-35 minutes</p>
             <div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; font-size: 0.9rem; color: #6d4c41;">
                 <span>📱 Track your order</span>
                 <span>🛡️ Safe packaging</span>
@@ -229,7 +245,7 @@
                 <li><a href="menu.jsp">📖 Menu</a></li>
                 <li><a href="myorders.jsp">📋 My Orders</a></li>
                 <li><a href="cart.jsp">🛒 Cart</a></li>
-                <li><a href="index.jsp">🔐 Account</a></li>
+                <li><a href="auth.jsp">🔐 Account</a></li>
             </ul>
             <p class="footer-copy">© 2025 Food Paradise. Delivering happiness, one meal at a time! 🍽️❤️</p>
         </div>
@@ -243,7 +259,114 @@
         </div>
     </div>
 
+    <div id="orderTypeModal" class="order-type-modal">
+    <div class="order-modal-content">
+        <button class="modal-close" onclick="closeOrderTypeModal()">&times;</button>
+        
+        <div class="modal-header">
+            <div class="modal-header-content">
+                <span class="modal-icon">🛒</span>
+                <h2 class="modal-title">Choose Order Type</h2>
+                <p class="modal-subtitle">Select how you'd like to receive your delicious meal</p>
+            </div>
+        </div>
+        
+        <div class="modal-body">
+            <div class="order-options">
+                <!-- Normal Order Option -->
+                <div class="order-option" onclick="selectOrderType('normal', this)" data-type="normal">
+                    <div class="option-header">
+                        <div class="option-icon">🚚</div>
+                        <div class="option-info">
+                            <h3>Order Now</h3>
+                            <div class="option-price">Ready in 25-35 mins</div>
+                        </div>
+                        <div class="radio-custom"></div>
+                    </div>
+                    <div class="option-description">
+                        Get your fresh meal prepared and delivered right away. Perfect for when you're hungry now!
+                    </div>
+                </div>
+                
+                <!-- Pre-Order Option -->
+                <div class="order-option" onclick="selectOrderType('preorder', this)" data-type="preorder">
+                    <div class="option-badge">Popular</div>
+                    <div class="option-header">
+                        <div class="option-icon">📅</div>
+                        <div class="option-info">
+                            <h3>Pre-Order</h3>
+                            <div class="option-price">Schedule for later</div>
+                        </div>
+                        <div class="radio-custom"></div>
+                    </div>
+                    <div class="option-description">
+                        Schedule your order for a specific time. Great for planning meals ahead or avoiding rush hours.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-cancel" onclick="closeOrderTypeModal()">
+                    Cancel
+                </button>
+                <button class="modal-btn modal-btn-confirm" id="confirmOrderBtn" onclick="confirmOrderType()" disabled>
+                    Continue
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
     <script>
+
+        let currentOrderForm = null;
+let selectedOrderType = null;
+
+function handleOrderType(itemId) {
+    console.log("Clicked Add to Cart, showing modal for item", itemId);
+
+    currentOrderForm = document.getElementById("cartForm" + itemId);
+    selectedOrderType = null;
+
+    // Reset modal
+    document.querySelectorAll('.order-option').forEach(opt => opt.classList.remove('selected'));
+    document.getElementById('confirmOrderBtn').disabled = true;
+
+    showOrderTypeModal();
+    return false; // stop default submit
+}
+
+function showOrderTypeModal() {
+    const modal = document.getElementById('orderTypeModal');
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeOrderTypeModal() {
+    const modal = document.getElementById('orderTypeModal');
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+function selectOrderType(type, element) {
+    document.querySelectorAll('.order-option').forEach(option => {
+        option.classList.remove('selected');
+    });
+    element.classList.add('selected');
+    selectedOrderType = type;
+    document.getElementById('confirmOrderBtn').disabled = false;
+}
+
+function confirmOrderType() {
+    if (!currentOrderForm || !selectedOrderType) return;
+
+    currentOrderForm.action = (selectedOrderType === 'preorder') ? "PreOrderCartServlet" : "CartServlet";
+
+    closeOrderTypeModal();
+    currentOrderForm.submit();
+}
+
+        
         // Store selected item data
         let selectedItem = null;
         let isSeasonalPromotion = false;
@@ -264,7 +387,7 @@
                 document.getElementById('heroDish').innerHTML = `
                     <div style="width: 300px; height: 300px; background: linear-gradient(135deg, #2196f3, #4caf50, #ff9800); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 3rem; box-shadow: 0 15px 35px rgba(33, 150, 243, 0.3); animation: promotional-pulse 2s infinite;">
                         <div style="font-size: 4rem; margin-bottom: 8px;">🌧️</div>
-                        <div style="font-size: 2.2rem; font-weight: 900; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">25%</div>
+                        <div style="font-size: 2.2rem; font-weight: 900; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">20%</div>
                         <div style="font-size: 1.1rem; color: white; font-weight: 700;">OFF</div>
                     </div>`;
                 isSeasonalPromotion = true;

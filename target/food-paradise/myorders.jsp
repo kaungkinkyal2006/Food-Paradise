@@ -20,22 +20,22 @@
 <head>
     <meta charset="UTF-8">
     <title>My Orders — Food Paradise</title>
-    <link rel="stylesheet" href="assets/myorders.css?v=1.0">
+    <link rel="stylesheet" href="assets/myorders.css?v=2.0">
 </head>
 <body>
 <header class="header">
     <nav class="navbar">
-        <div class="logo">Food <p style="color: white;">Paradise</p></div>
+        <div class="logo">
+                🍽️ Food <p>Paradise</p>
+            </div>
         <ul class="nav-links">
-            <li><a href="menu.jsp">Find Food</a></li>
-            <li><a href="myorders.jsp">My Orders</a></li>
-            <li><a href="cart.jsp">Cart</a></li>
+            <li><a href="menu.jsp">🏠 Home</a></li>
+            <li><a href="menu.jsp">🍽️ Menu</a></li>
+            <li><a href="myorders.jsp">📋 My Orders</a></li>
+            <li><a href="myPreorder.jsp">📅 My Preorders</a></li>
         </ul>
         <div class="search-cart">
-        
-            <!-- Login/Logout Button -->
             <%
-                // Check if user is logged in
                 if(user != null){
             %>
                 <form method="get" action="logout" style="display:inline;">
@@ -44,7 +44,7 @@
             <%
                 } else {
             %>
-                <button class="login-btn" onclick="location.href='index.jsp'">Login</button>
+                <button class="login-btn" onclick="location.href='auth.jsp'">Login</button>
             <%
                 }
             %>
@@ -52,27 +52,41 @@
     </nav>
 </header>
 
-
 <main class="container">
     <h2>Your Orders</h2>
 
     <% if(orders.isEmpty()) { %>
-        <p>You have no orders yet.</p>
+        <p>You have no preorders yet.</p>
     <% } else { %>
         <table>
             <thead>
                 <tr>
                     <th>Order ID</th>
-                    <th>Total</th>
-                    <th>Created At</th>
+                    <th>Original Total</th>
+                    <th>Delivery Fee</th>
+                    <th>Discount</th>
+                    <th>Final Total</th>
+                    <th>Phone</th>
+                    <th>Ordered At</th>
                 </tr>
             </thead>
             <tbody>
                 <% for(Order o : orders) { %>
                     <tr>
-                        <td><%= o.getId() %></td>
-                        <td>$<%= o.getTotal() %></td>
-                        <td><%= o.getCreatedAt() %></td>
+                        <td data-label="Order ID"><%= o.getId() %></td>
+                        <td data-label="Original Total">MMK<%= o.getOriginalTotal() %></td>
+                        <td data-label="Delivery Fee">
+    <%= o.getDeliveryFee() != null ? "MMK" + o.getDeliveryFee() : "-" %>
+</td>
+                        <td data-label="Discount">
+                            MMK<%= o.getDiscountAmount() %> 
+                            <% if(o.getDiscountAmount() > 0) { %>
+                                (<%= o.getDiscountReason() %>)
+                            <% } %>
+                        </td>
+                        <td data-label="Final Total">MMK<%= o.getTotal() %></td>
+                        <td data-label="Phone"><%= o.getPhone() != null ? o.getPhone() : "-" %></td>
+                        <td data-label="Created At"><%= o.getCreatedAt() %></td>
                     </tr>
                 <% } %>
             </tbody>
@@ -80,15 +94,18 @@
     <% } %>
 </main>
 
+<!-- Footer -->
 <footer class="footer">
     <div class="footer-content">
-        <div class="footer-logo">Food <span>Paradise</span></div>
+        <div class="footer-logo">🍽️ Food <span>Paradise</span></div>
         <ul class="footer-links">
-            <li><a href="menu.jsp">Menu</a></li>
-            <li><a href="myorders.jsp">My Orders</a></li>
-            <li><a href="index.jsp">Register</a></li>
+            <li><a href="menu.jsp">🏠 Home</a></li>
+            <li><a href="menu.jsp">📖 Menu</a></li>
+            <li><a href="myorders.jsp">📋 My Orders</a></li>
+            <li><a href="cart.jsp">🛒 Cart</a></li>
+            <li><a href="auth.jsp">🔐 Account</a></li>
         </ul>
-        <p class="footer-copy">© 2025 Food Paradise. All rights reserved.</p>
+        <p class="footer-copy">© 2025 Food Paradise. Delivering happiness, one meal at a time! 🍽️❤️</p>
     </div>
 </footer>
 

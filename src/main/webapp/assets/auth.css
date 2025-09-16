@@ -1,0 +1,139 @@
+/* auth.css - Food Paradise Landing Page */
+
+/* RESET / BASE */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: #fefefe;
+  background-image: 
+    radial-gradient(circle at 25% 25%, #fff8f0 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, #f9f6f1 0%, transparent 50%);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #5d4037;
+  line-height: 1.6;
+  position: relative;
+}
+
+/* FLOATING LEAVES */
+.leaf {
+  position: absolute;
+  font-size: 28px;
+  animation: floatLeaf 20s linear infinite;
+  z-index: 1;
+}
+
+@keyframes floatLeaf {
+  0% { transform: translateY(-100vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.6; }
+  50% { transform: translateY(50vh) rotate(180deg); opacity: 0.6; }
+  90% { opacity: 0.6; }
+  100% { transform: translateY(120vh) rotate(360deg); opacity: 0; }
+}
+
+/* SPARKLES */
+.sparkle {
+  position: absolute;
+  font-size: 20px;
+  animation: sparkle 6s ease-in-out infinite;
+  z-index: 2;
+}
+
+.sparkle::after { content: "✨"; }
+
+@keyframes sparkle {
+  0%, 100% { transform: scale(0.5) rotate(0deg); opacity: 0.3; }
+  50% { transform: scale(1.2) rotate(180deg); opacity: 1; }
+}
+
+/* STEAM */
+.steam {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle, rgba(255,255,255,0.6) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: steamRise 8s ease-in-out infinite;
+  z-index: 1;
+}
+
+@keyframes steamRise {
+  0% { transform: translateY(0) scale(0.5); opacity: 0; }
+  20% { opacity: 0.8; }
+  80% { opacity: 0.4; }
+  100% { transform: translateY(-200px) scale(1.5); opacity: 0; }
+}
+
+/* HERO SECTION */
+.hero {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  max-width: 700px;
+  padding: 2rem;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  font-weight: 900;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  color: #6d4c41;
+}
+
+/* BUTTONS */
+.actions .button {
+  display: inline-block;
+  margin: 0 1rem;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: 16px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.actions .button:first-child {
+  background: linear-gradient(135deg, #d84315, #bf360c);
+  color: #fff;
+}
+
+.actions .button:first-child:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(216,67,21,0.3);
+}
+
+.actions .button:last-child {
+  background: none;
+  color: #0288d1;
+  border: 2px solid #0288d1;
+}
+
+.actions .button:last-child:hover {
+  background: #0288d1;
+  color: #fff;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .hero h1 { font-size: 2.5rem; }
+  .hero p { font-size: 1rem; }
+  .actions .button { margin: 0.5rem 0; padding: 0.8rem 1.5rem; }
+}
+
+@media (max-width: 480px) {
+  .hero h1 { font-size: 2rem; }
+  .hero p { font-size: 0.9rem; }
+}

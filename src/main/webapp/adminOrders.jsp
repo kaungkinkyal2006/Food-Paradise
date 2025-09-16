@@ -18,16 +18,33 @@
 <head>
     <meta charset="UTF-8">
     <title>Admin Orders — Food Paradise</title>
-    <link rel="stylesheet" href="assets/adminorders.css">
+    <link rel="stylesheet" href="assets/adminorders.css?v=2.0">
 </head>
 <body>
-<header class="navbar">
-    <div class="logo">🍽️ Food Paradise</div>
-    <ul class="nav-links">
-        <li><a href="admin.jsp">Dashboard</a></li>
-        <li><a href="AdminOrdersServlet">Orders</a></li>
-        <li><a href="logout">Logout</a></li>
-    </ul>
+<header class="header">
+    <nav class="navbar">
+        <div class="logo">🍽️ Food <p>Paradise</p></div>
+        <ul class="nav-links">
+            <li><a href="admin.jsp">Dashboard</a></li>
+            <li><a href="AdminOrdersServlet">Orders</a></li>
+            <li><a href="AdminPreOrderServlet">Pre-Orders</a></li>
+        </ul>
+        <div class="search-cart">
+            <%
+                if(user != null){
+            %>
+                <form method="get" action="logout" style="display:inline;">
+                    <button type="submit" class="login-btn">Logout</button>
+                </form>
+            <%
+                } else {
+            %>
+                <button class="login-btn" onclick="location.href='auth.jsp'">Login</button>
+            <%
+                }
+            %>
+        </div>
+    </nav>
 </header>
 
 <main class="container">
@@ -40,16 +57,16 @@
         <thead>
         <tr>
             <th>Order ID</th>
-            <th>User ID</th>
+            <th>User Name</th>
             <th>Total</th>
-            <th>Created At</th>
+            <th>Ordered At</th>
         </tr>
         </thead>
         <tbody>
         <% for(Order o : orders) { %>
         <tr>
             <td><%= o.getId() %></td>
-            <td><%= o.getUserId() %></td>
+            <td><%= o.getUserName() %></td>
             <td>MMK<%= o.getTotal() %></td>
             <td><%= o.getCreatedAt() %></td>
         </tr>
@@ -58,5 +75,11 @@
     </table>
     <% } %>
 </main>
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-logo">🍽️ Food <span>Paradise</span></div>
+        <p class="footer-copy">© 2025 Food Paradise. Delivering happiness, one meal at a time! 🍽️❤️</p>
+    </div>
+</footer>
 </body>
 </html>

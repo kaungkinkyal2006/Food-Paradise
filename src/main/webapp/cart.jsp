@@ -2,6 +2,8 @@
 <%@ page import="com.foodparadise.model.CartItem" %>
 <%@ page import="com.foodparadise.model.User" %>
 <%@ page import="com.foodparadise.model.Order" %>
+<%@ page import="com.foodparadise.model.MenuItem" %>
+<%@ page import="com.foodparadise.dao.MenuDAO" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.time.LocalDate" %>
 <%
@@ -36,35 +38,33 @@
 </head>
 <body>
 <header class="header">
-        <nav class="navbar">
-            <div class="logo">
+    <nav class="navbar">
+        <div class="logo">
                 🍽️ Food <p>Paradise</p>
             </div>
-            <ul class="nav-links">
-                <li><a href="menu.jsp">🍽️ Menu</a></li>
-                <li><a href="myorders.jsp">📋 My Orders</a></li>
-            </ul>
-            <div class="search-cart">
-                
-
-                <!-- Login/Logout Button -->
-                <%
-                    
-                    if(user != null){
-                %>
-                    <form method="get" action="logout" style="display:inline;">
-                        <button type="submit" class="login-btn">👋 Logout</button>
-                    </form>
-                <%
-                    } else {
-                %>
-                    <button class="login-btn" onclick="location.href='index.jsp'">🔐 Login</button>
-                <%
-                    }
-                %>
-            </div>
-        </nav>
-    </header>
+        <ul class="nav-links">
+            <li><a href="menu.jsp">🏠 Home</a></li>
+            <li><a href="menu.jsp">🍽️ Menu</a></li>
+            <li><a href="myorders.jsp">📋 My Orders</a></li>
+            <li><a href="myPreorder.jsp">📅 My Preorders</a></li>
+        </ul>
+        <div class="search-cart">
+            <%
+                if(user != null){
+            %>
+                <form method="get" action="logout" style="display:inline;">
+                    <button type="submit" class="login-btn">Logout</button>
+                </form>
+            <%
+                } else {
+            %>
+                <button class="login-btn" onclick="location.href='auth.jsp'">Login</button>
+            <%
+                }
+            %>
+        </div>
+    </nav>
+</header>
 
 <main class="container no-print">
     <h2>Items in Your Cart</h2>
@@ -77,8 +77,8 @@
     <% } %>
     <% if(isRainyDiscount) { %>
 <div class="december-discount-banner" style="background: linear-gradient(135deg, #17a2b8, #28a745);">
-    <h3>☔ Rainy Season Special! ☔</h3>
-    <p>Enjoy 20% OFF on all orders during the rainy season!</p>
+    <h3 style="color: white;">☔ Rainy Season Special! ☔</h3>
+    <p style="color: white;">Enjoy 20% OFF on all orders during the rainy season!</p>
 </div>
 <% } %>
 
@@ -87,88 +87,107 @@
     <p>Your cart is empty.</p>
     <% } else { %>
     <form id="cartForm" action="AddOrderServlet" method="post">
-        <div class="cart-grid">
-            <% for(int i=0; i<cart.size(); i++){
-                CartItem item = cart.get(i);
-            %>
-            <div class="cart-card" data-index="<%=i%>">
-                <div class="cart-card-content">
-                    <h4><%= item.getName() %></h4>
-                    <p class="price">MMK<%= item.getPrice() %></p>
-                    <p>
-                        Quantity:
-                        <input type="number" class="quantity-input" name="quantity_<%=i%>" value="<%= item.getQuantity() %>" min="1">
-                        <input type="hidden" name="id_<%=i%>" value="<%= item.getId() %>">
-                    </p>
-                </div>
-                <div class="cart-card-footer">
-                    <button type="button" class="remove-btn"
-                            onclick="window.location='RemoveCartItemServlet?index=<%=i%>'">
-                        Remove
-                    </button>
-                    <span class="subtotal">MMK<%= item.getPrice()*item.getQuantity() %></span>
-                </div>
+    <div class="cart-grid">
+        <% 
+        MenuDAO menuDao = new MenuDAO();
+
+        for(int i=0; i<cart.size(); i++){
+            CartItem item = cart.get(i);
+            MenuItem menuItem = menuDao.getMenuItemById(item.getId());
+    int stock = menuItem != null ? menuItem.getStock() : 0;
+            int maxAllowed = Math.min(50, stock); // maximum allowed quantity
+        %>
+        <div class="cart-card" data-index="<%=i%>">
+            <div class="cart-card-content">
+                <h4><%= item.getName() %></h4>
+                <p class="price">MMK<%= item.getPrice() %></p>
+                <p>
+                    Quantity:
+                    <input type="number" class="quantity-input" 
+                           name="quantity_<%=i%>" 
+                           value="<%= Math.min(item.getQuantity(), maxAllowed) %>" 
+                           min="1" 
+                           max="<%= maxAllowed %>">
+                    <input type="hidden" name="id_<%=i%>" value="<%= item.getId() %>">
+                </p>
+                <% if(item.getQuantity() > maxAllowed){ %>
+    <div class="stock-warning">
+        ⚠️ Maximum order for this item is <%= maxAllowed %>.
+        <button type="button" class="transfer-btn" 
+                onclick="transferToPreorder(<%= item.getId() %>, '<%= item.getName().replace("'", "\\'") %>', <%= item.getPrice() %>, <%= item.getQuantity() %>)">
+            Move to Preorder
+        </button>
+        or <a href="preorder.jsp" class="preorder-link">browse preorder page</a>
+    </div>
+<% } %>
             </div>
-            <% } %>
+            <div class="cart-card-footer">
+                <button type="button" class="remove-btn"
+                        onclick="window.location='RemoveCartItemServlet?index=<%=i%>'">
+                    Remove
+                </button>
+                <span class="subtotal">MMK<%= item.getPrice() * Math.min(item.getQuantity(), maxAllowed) %></span>
+            </div>
         </div>
-
-        <div class="discount-breakdown">
-   
-    <% if(isDecemberDiscount) { %>
-    <div class="discount-row">
-        <span>December Discount (10%):</span>
-        <span class="discount-amount" id="decemberDiscountAmount">-MMK0.00</span>
+        <% } %>
     </div>
-    <% } %>
-    <% if(isRainyDiscount) { %>
-    <div class="discount-row">
-        <span>Rainy Season Discount (20%):</span>
-        <span class="discount-amount" id="rainyDiscountAmount">-MMK0.00</span>
-    </div>
-    <% } %>
-    <div class="discount-row total">
-        <span>Total:</span>
-        <span id="total">MMK0.00</span>
-    </div>
-</div>
 
-
-        <!-- Phone Number Field -->
-        <div class="phone-field">
-            <label for="phone">Phone Number (+959...):</label>
-            <input type="tel" id="phone" name="phone" placeholder="+959XXXXXXXXX" pattern="\+959\d{7,9}" required>
+    <div class="discount-breakdown">
+        <% if(isDecemberDiscount) { %>
+        <div class="discount-row">
+            <span>December Discount (10%):</span>
+            <span class="discount-amount" id="decemberDiscountAmount">-MMK0.00</span>
         </div>
-
-        <!-- Location Fields -->
-<div class="location-field">
-    <label for="city">City:</label>
-    <select id="city" name="city" required onchange="updateDeliveryFee()">
-        <option value="">Select City</option>
-        <option value="Yangon">Yangon</option>
-        <option value="Mandalay">Mandalay</option>
-        <option value="Taunggyi">Taunggyi</option>
-        <option value="Naypyitaw">Naypyitaw</option>
-    </select>
-</div>
-
-<div class="street-field" style="margin-top:10px;">
-    <label for="street">Street Address:</label>
-    <input type="text" id="street" name="street" placeholder="Enter street address" required>
-</div>
-
-<div class="delivery-fee" style="margin-top:10px;">
-    <span>Delivery Fee: </span><span id="deliveryFeeDisplay">MMK0.00</span>
-</div>
-
-
-        <div class="button-group">
-            <input type="hidden" name="totalAmount" id="totalAmount" value="0">
-            <input type="hidden" name="originalAmount" id="originalAmount" value="0">
-            <input type="hidden" name="discountAmount" id="discountAmountHidden" value="0">
-            <input type="hidden" name="isDecemberDiscount" value="<%= isDecemberDiscount %>">
-            <button type="button" class="checkout-btn" id="checkoutBtn" disabled onclick="confirmKBZPayment()">Pay with KBZpay</button>
+        <% } %>
+        <% if(isRainyDiscount) { %>
+        <div class="discount-row">
+            <span>Rainy Season Discount (20%):</span>
+            <span class="discount-amount" id="rainyDiscountAmount" style="color: #28a745;">-MMK0.00</span>
         </div>
-    </form>
+        <% } %>
+        <div class="discount-row total">
+            <span>Total:</span>
+            <span id="total">MMK0.00</span>
+        </div>
+    </div>
+
+    <!-- Phone Number Field -->
+    <div class="phone-field">
+        <label for="phone">Phone Number (+959...):</label>
+        <input type="tel" id="phone" name="phone" placeholder="+959XXXXXXXXX" pattern="\+959\d{7,9}" required>
+    </div>
+
+    <!-- Location Fields -->
+    <div class="location-field">
+        <label for="city">City:</label>
+        <select id="city" name="city" required onchange="updateDeliveryFee()">
+            <option value="">Select City</option>
+            <option value="Yangon">Yangon</option>
+            <option value="Mandalay">Mandalay</option>
+            <option value="Taunggyi">Taunggyi</option>
+            <option value="Naypyitaw">Naypyitaw</option>
+        </select>
+    </div>
+
+    <div class="street-field" style="margin-top:10px;">
+        <label for="street">Street Address:</label>
+        <input type="text" id="street" name="street" placeholder="Enter street address" required>
+    </div>
+
+    <div class="delivery-fee" style="margin-top:10px;">
+        <span>Delivery Fee: </span><span id="deliveryFeeDisplay">MMK0.00</span>
+    </div>
+
+    <div class="button-group">
+        <input type="hidden" name="totalAmount" id="totalAmount" value="0">
+        <input type="hidden" name="originalAmount" id="originalAmount" value="0">
+        <input type="hidden" name="discountAmount" id="discountAmountHidden" value="0">
+        <input type="hidden" name="isDecemberDiscount" value="<%= isDecemberDiscount %>">
+        <input type="hidden" name="deliveryFee" id="deliveryFeeHidden" value="0">
+        <button type="button" class="checkout-btn" id="checkoutBtn" disabled onclick="confirmKBZPayment()">Pay with KBZpay</button>
+    </div>
+</form>
+
     <% } %>
 </main>
 
@@ -249,18 +268,18 @@
 </div>
 
 <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-logo">🍽️ Food <span>Paradise</span></div>
-            <ul class="footer-links">
-                <li><a href="menu.jsp">🏠 Home</a></li>
-                <li><a href="menu.jsp">📖 Menu</a></li>
-                <li><a href="myorders.jsp">📋 My Orders</a></li>
-                <li><a href="cart.jsp">🛒 Cart</a></li>
-                <li><a href="index.jsp">🔐 Account</a></li>
-            </ul>
-            <p class="footer-copy">© 2025 Food Paradise. Delivering happiness, one meal at a time! 🍽️❤️</p>
-        </div>
-    </footer>
+    <div class="footer-content">
+        <div class="footer-logo">🍽️ Food <span>Paradise</span></div>
+        <ul class="footer-links">
+            <li><a href="menu.jsp">🏠 Home</a></li>
+            <li><a href="menu.jsp">📖 Menu</a></li>
+            <li><a href="myorders.jsp">📋 My Orders</a></li>
+            <li><a href="cart.jsp">🛒 Cart</a></li>
+            <li><a href="auth.jsp">🔐 Account</a></li>
+        </ul>
+        <p class="footer-copy">© 2025 Food Paradise. Delivering happiness, one meal at a time! 🍽️❤️</p>
+    </div>
+</footer>
 
 <script>
 const isDecemberDiscount = <%= isDecemberDiscount %>;
@@ -289,7 +308,59 @@ function updateDeliveryFee() {
     if(feeDisplay) feeDisplay.textContent = 'MMK' + deliveryFee.toFixed(2);
     updateTotals();
 }
+// Transfer item to preorder cart
+function transferToPreorder(itemId, itemName, itemPrice, currentQty) {
+    // Confirm with user
+    if (!confirm(`Transfer "${itemName}" (${currentQty} units) to preorder cart?`)) {
+        return;
+    }
+    
+    // Create form data to send to PreOrderCartServlet
+    const formData = new FormData();
+    formData.append('id', itemId);
+    formData.append('name', itemName);
+    formData.append('price', itemPrice);
+    formData.append('quantity', currentQty);
+    
+    // Set default expected delivery date (3 days from now)
+    const futureDate = new Date();
+    futureDate.setDate(futureDate.getDate() + 3);
+    const dateString = futureDate.toISOString().split('T')[0]; // YYYY-MM-DD
+    formData.append('expectedDeliveryDate', dateString);
+    
+    // Send to PreOrderCartServlet
+    fetch('PreOrderCartServlet', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (response.ok) {
+            // Remove item from regular cart via server call
+            const cartIndex = getCartIndex(itemId);
+            if (cartIndex >= 0) {
+                window.location.href = `RemoveCartItemServlet?index=${cartIndex}`;
+            }
+        } else {
+            alert('Failed to transfer item. Please try again.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error transferring item. Please try again.');
+    });
+}
 
+// Helper function to find cart index by item ID
+function getCartIndex(itemId) {
+    const cartCards = document.querySelectorAll('.cart-card');
+    for (let i = 0; i < cartCards.length; i++) {
+        const hiddenId = cartCards[i].querySelector('input[name^="id_"]');
+        if (hiddenId && hiddenId.value == itemId) {
+            return i;
+        }
+    }
+    return -1;
+}
 // Totals Calculation
 function updateTotals() {
     let subtotal = 0;
@@ -326,6 +397,8 @@ document.getElementById('receiptTotal').textContent = 'MMK' + finalTotal.toFixed
     document.getElementById('discountAmountHidden').value = totalDiscount.toFixed(2);
     document.getElementById('totalAmount').value = finalTotal.toFixed(2);
     document.getElementById('originalAmount').value = subtotal.toFixed(2);
+    document.getElementById('deliveryFeeHidden').value = deliveryFee.toFixed(2);
+
 }
 
 // Update Receipt
