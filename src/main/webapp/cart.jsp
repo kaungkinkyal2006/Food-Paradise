@@ -113,11 +113,7 @@
                 <% if(item.getQuantity() > maxAllowed){ %>
     <div class="stock-warning">
         ⚠️ Maximum order for this item is <%= maxAllowed %>.
-        <button type="button" class="transfer-btn" 
-                onclick="transferToPreorder(<%= item.getId() %>, '<%= item.getName().replace("'", "\\'") %>', <%= item.getPrice() %>, <%= item.getQuantity() %>)">
-            Move to Preorder
-        </button>
-        or <a href="preorder.jsp" class="preorder-link">browse preorder page</a>
+        <a href="menu.jsp" class="preorder-link">browse preorder page</a>
     </div>
 <% } %>
             </div>
